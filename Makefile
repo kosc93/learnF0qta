@@ -1,7 +1,7 @@
 CC := g++
 SRCDIR := src
 BUILDDIR := build
-EXECUTABLES := sampa2vec findqta linkqta plotqta
+EXECUTABLES := bin/sampa2vec bin/findqta bin/linkqta bin/plotqta
  
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -12,21 +12,21 @@ INC := -I include
 
 all: ${EXECUTABLES}
 
-sampa2vec: $(BUILDDIR)/sampa2vec.o $(BUILDDIR)/Word.o $(BUILDDIR)/Syllable.o $(BUILDDIR)/Vowel.o $(BUILDDIR)/Consonant.o $(BUILDDIR)/StringOps.o
+bin/sampa2vec: $(BUILDDIR)/sampa2vec.o $(BUILDDIR)/Word.o $(BUILDDIR)/Syllable.o $(BUILDDIR)/Vowel.o $(BUILDDIR)/Consonant.o $(BUILDDIR)/StringOps.o
 	@echo " Linking" $@ "... "
-	@echo " $(CC) $^ -o bin/$@ $(LIB)"; $(CC) $^ -o bin/$@ $(LIB) -lm -lnlopt
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm -lnlopt
 
-findqta: $(BUILDDIR)/findqta.o $(BUILDDIR)/ApproximationSystem.o $(BUILDDIR)/PraatFileIO.o
+bin/findqta: $(BUILDDIR)/findqta.o $(BUILDDIR)/ApproximationSystem.o $(BUILDDIR)/PraatFileIO.o
 	@echo " Linking" $@ "... "
-	@echo " $(CC) $^ -o bin/$@ $(LIB)"; $(CC) $^ -o bin/$@ $(LIB) -lm -lnlopt
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm -lnlopt
 
-linkqta: $(BUILDDIR)/linkqta.o $(BUILDDIR)/FileAnalyzer.o
+bin/linkqta: $(BUILDDIR)/linkqta.o $(BUILDDIR)/FileAnalyzer.o
 	@echo " Linking" $@ "... "
-	@echo " $(CC) $^ -o bin/$@ $(LIB)"; $(CC) $^ -o bin/$@ $(LIB)
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
 
-plotqta: $(BUILDDIR)/plotqta.o $(BUILDDIR)/PlotFileGenerator.o
+bin/plotqta: $(BUILDDIR)/plotqta.o $(BUILDDIR)/PlotFileGenerator.o
 	@echo " Linking" $@ "... "
-	@echo " $(CC) $^ -o bin/$@ $(LIB)"; $(CC) $^ -o bin/$@ $(LIB)
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
@@ -34,7 +34,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(foreach BIN,$(EXECUTABLES),bin/$(BIN))"; $(RM) -r $(BUILDDIR) $(foreach BIN,$(EXECUTABLES),bin/$(BIN))
+	@echo " $(RM) -r $(BUILDDIR) ${EXECUTABLES}"; $(RM) -r $(BUILDDIR) ${EXECUTABLES}
 
 test: $(TARGET)
 	@echo " Testing...";

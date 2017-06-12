@@ -27,7 +27,7 @@ then
 	cp bin/findqta $path
 
 	printf ">> Process Audio Files ... \n"
-	#tools/praat --run $path/_PENTAtrainer1N.praat 1 \"label\" \"Process all sounds without pause\" 100 600 10 100 0 -0.03 0.07 \"yes\" $mmin $mmax $bmin $bmax $lmin $lmax 150 $N \"no\" \"qTA_synthesis\" \"sil\" \"yes\" \"no\" no
+	tools/praat --run $path/_PENTAtrainer1N.praat 1 \"label\" \"Process all sounds without pause\" 100 600 10 100 0 -0.03 0.07 \"yes\" $mmin $mmax $bmin $bmax $lmin $lmax 150 $N \"no\" \"qTA_synthesis\" \"sil\" \"yes\" \"no\" no
 
 	printf "\n>> Generate Ensemble File ... \n"
 	tools/praat --run $path/_PENTAtrainer1N.praat 1 \"label\" \"Get emsemble files\" 100 600 10 100 0 -0.03 0.07 \"yes\" $mmin $mmax $bmin $bmax $lmin $lmax 150 $N \"no\" \"qTA_synthesis\" \"sil\" \"yes\" \"no\" no
