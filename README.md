@@ -1,8 +1,17 @@
-# learnF0qta
-
 ## Description
 learnF0qta is a software tool for learning qTA parameters of a speech-corpus for F0 prediction utilizing PENTAtrainer1. The main part of the software is a shell script calling different C++ programs and managing the file input and output. A modified version of [PENTAtrainer1](http://www.homepages.ucl.ac.uk/~uclyyix/PENTAtrainer1/) is used for extracting optimal qTA targets for F0-resythesis. Based on this data and the SAMPA transcription, a training file is generated which is used for the training of different machine learning methods. Additional features like generating plots and some statistics are also implemented. The whole software works full automatically without any user interaction or GUI.
 
+## Requirements
+The software is developed on a 64-bit Linux system with Ubuntu 16.04 LTS. The `g++` compiler with `c++11` support is required. Only the Praat binary is delivered, the other code is build natively by the installation script.
+Most tools (Praat, PENTAtrainer, NLopt, LIBSVM, etc.) are delivered with the source code and are compiled and installed in the local directory. Additionally, some other software is neccessary in order to run the code which is listed below. 
+Gnuplot: Is used for generating plots from different data.
+```
+sudo apt-get install gnuplot
+```
+XMLstarlet: Is a small command line tool for analyzing xml files which is used for configuration files.
+```
+sudo apt-get install xmlstarlet
+```
 ## Installation
 Use the installation script for locally installing the external libraries and starting the build process.
 ```
@@ -12,7 +21,7 @@ Use the installation script for locally installing the external libraries and st
 Put all the files of the annotated corpus in a directory e.g. called `corpus/`. Create a configuration xml file in the directory above `../corpus/` and name it for instance `config.xml`. An example xml configuration is given below.
 ```
 <config>
-	<path>/home/patrick/Documents/Diplomarbeit/03_Software/03_Entwicklung/data/corpus/</path>
+	<path>/home/patrick/Documents/Diplomarbeit/03_Software/03_Entwicklung/data/corpus</path>
 	<praat>
 		<systemorder>5</systemorder>
 		<syllableshift>30</syllableshift>
