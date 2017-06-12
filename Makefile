@@ -36,7 +36,7 @@ clean:
 	@echo " Cleaning..."; 
 	@echo " $(RM) -r $(BUILDDIR) ${EXECUTABLES}"; $(RM) -r $(BUILDDIR) ${EXECUTABLES}
 
-test: $(TARGET)
+test:
 	@echo " Testing...";
 
 .PHONY: clean test
