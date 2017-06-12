@@ -4,6 +4,7 @@ learnF0qta is a software tool for learning qTA parameters of a speech-corpus for
 ## Requirements
 The software is developed on a 64-bit Linux system with Ubuntu 16.04 LTS. The `g++` compiler with `c++11` support is required. Only the Praat binary is delivered, the other code is build natively by the installation script.
 Most tools (Praat, PENTAtrainer, NLopt, LIBSVM, etc.) are delivered with the source code and are compiled and installed in the local directory. Additionally, some other software is neccessary in order to run the code which is listed below. 
+
 Gnuplot: Is used for generating plots from different data.
 ```
 sudo apt-get install gnuplot
