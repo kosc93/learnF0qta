@@ -15,6 +15,7 @@ then
 	N="$( xmlstarlet sel -t -v 'config/praat/systemorder' "$1" )"
 	sshift="$( xmlstarlet sel -t -v 'config/praat/syllableshift' "$1" )"
 
+
 	echo '>> Using the following configuration:'
 	printf '\tslope\t [%s%s] st/sec\n' "$mmin,$mmax"
 	printf '\toffset\t [%s%s] st\n' "$bmin,$bmax"
