@@ -13,11 +13,12 @@
 #include <array>
 #include <map>
 
-const uint8_t NUM_VOWEL_FEATURES 	= 8;
+const uint8_t NUM_VOWEL_FEATURES 	= 5;
 const uint8_t NUM_CONSONANT_FEATURES= 7;
-const uint8_t NUM_POSITION_FEATURES = 6;
+const uint8_t NUM_PHONETIC_FEATURES = 54;
+const uint8_t NUM_POSITION_FEATURES = 8;
 const uint8_t NUM_ACCENT_FEATURES 	= 3;
-const uint8_t NUM_SYLLABLE_FEATURES = 66;
+const uint8_t NUM_SYLLABLE_FEATURES = 65;
 
 const uint8_t NUM_PHONEMES_ONSET	= 3;
 const uint8_t NUM_PHONEMES_NUCLEUS	= 1;

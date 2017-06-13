@@ -21,7 +21,7 @@ $(BINDIR)/findqta: $(BUILDDIR)/findqta.o $(BUILDDIR)/ApproximationSystem.o $(BUI
 	@echo " Linking" $@ "... "
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm -lnlopt
 
-$(BINDIR)/linkqta: $(BUILDDIR)/linkqta.o $(BUILDDIR)/FileAnalyzer.o
+$(BINDIR)/linkqta: $(BUILDDIR)/linkqta.o $(BUILDDIR)/FileAnalyzer.o $(BUILDDIR)/StringOps.o
 	@echo " Linking" $@ "... "
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
 
@@ -38,7 +38,8 @@ clean:
 	@echo " Cleaning..."; 
 	@echo " $(RM) -r $(BUILDDIR) $(BINDIR)"; $(RM) -r $(BUILDDIR) $(BINDIR)
 
-test:
+test: all
 	@echo " Testing...";
+	bash ./learnF0qta.sh test/config.xml
 
 .PHONY: clean test

@@ -31,45 +31,56 @@ void Word::determine_accent_pattern(std::string accentPattern)
 
 void Word::determine_syllable_vec()
 {
-	// split syllables by dot
-	uint8_t cntSyl = 0;
-	std::vector<std::string> syllable_str;
-	split(syllable_str,m_string,".");
+	// split words by vertical line
+	uint8_t cntWord (0); uint8_t cntSylAbs (0);
+	std::vector<std::string> word_str;
+	split(word_str, m_string, "|");
 
-	// create Syllable objects
-	for (auto i = syllable_str.begin(); i != syllable_str.end(); ++i)
+	for (auto w = word_str.begin(); w != word_str.end(); ++w)
 	{
-		cntSyl++;
-		m_syllable_vec.push_back(Syllable(*i));
-	}
+		cntWord++;
 
-	if (cntSyl != m_numberSyllables)
-	{
-		throw Exception("ERROR: Accent pattern doesn't match SAMPA string!");
-	}
+		// split syllables by dot
+		uint8_t cntSylRel = 0;
+		std::vector<std::string> syllable_str;
+		split(syllable_str,*w,".");
 
-	// additional information on accent and position
-	if (m_numberSyllables == 1) // words with only one syllable
-	{
-		m_syllable_vec[0].determine_accent_features(0, m_accentPattern[0], 0);
-		m_syllable_vec[0].determine_position_features(1,1,0,0);
-	}
-	else // longer words
-	{
-		// first syllable
-		m_syllable_vec[0].determine_accent_features(0, m_accentPattern[0], m_accentPattern[1]);
-		m_syllable_vec[0].determine_position_features(m_numberSyllables,1,0,m_syllable_vec[1].get_number_phonemes());
-
-		// following syllables
-		for (uint8_t i=1; i<m_numberSyllables-1; ++i)
+		// create Syllable objects
+		for (auto s = syllable_str.begin(); s != syllable_str.end(); ++s)
 		{
-			m_syllable_vec[i].determine_accent_features(m_accentPattern[i-1], m_accentPattern[i], m_accentPattern[i+1]);
-			m_syllable_vec[i].determine_position_features(m_numberSyllables,i+1,m_syllable_vec[i-1].get_number_phonemes(),m_syllable_vec[i+1].get_number_phonemes());
+			cntSylRel++; cntSylAbs++;
+			m_syllable_vec.push_back(Syllable(*s));
 		}
 
-		// last syllable
-		m_syllable_vec[m_numberSyllables-1].determine_accent_features(m_accentPattern[m_numberSyllables-2], m_accentPattern[m_numberSyllables-1], 0);
-		m_syllable_vec[m_numberSyllables-1].determine_position_features(m_numberSyllables,m_numberSyllables,m_syllable_vec[m_numberSyllables-2].get_number_phonemes(),0);
+		// additional information on accent and position
+		if (m_numberSyllables == 1) // words with only one syllable
+		{
+			m_syllable_vec[0].determine_accent_features(0, m_accentPattern[0], 0);
+			m_syllable_vec[0].determine_position_features(word_str.size(),cntWord,syllable_str.size(),1,0,0);
+		}
+		else // longer words
+		{
+			// first syllable
+			m_syllable_vec[0].determine_accent_features(0, m_accentPattern[0], m_accentPattern[1]);
+			m_syllable_vec[0].determine_position_features(word_str.size(),cntWord,syllable_str.size(),1,0,m_syllable_vec[1].get_number_phonemes());
+
+			// following syllables
+			for (uint8_t i=1; i<m_numberSyllables-1; ++i)
+			{
+				m_syllable_vec[i].determine_accent_features(m_accentPattern[i-1], m_accentPattern[i], m_accentPattern[i+1]);
+				m_syllable_vec[i].determine_position_features(word_str.size(),cntWord,syllable_str.size(),i+1,m_syllable_vec[i-1].get_number_phonemes(),m_syllable_vec[i+1].get_number_phonemes());
+			}
+
+			// last syllable
+			m_syllable_vec[m_numberSyllables-1].determine_accent_features(m_accentPattern[m_numberSyllables-2], m_accentPattern[m_numberSyllables-1], 0);
+			m_syllable_vec[m_numberSyllables-1].determine_position_features(word_str.size(),cntWord,syllable_str.size(),syllable_str.size(),m_syllable_vec[m_numberSyllables-2].get_number_phonemes(),0);
+		}
+	}
+
+	// validity check
+	if (cntSylAbs != m_numberSyllables)
+	{
+		throw Exception("ERROR: Accent pattern doesn't match SAMPA string!");
 	}
 }
 

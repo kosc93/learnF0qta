@@ -5,14 +5,15 @@ learnF0qta is a software tool for learning qTA parameters of a speech-corpus for
 The software is developed on a 64-bit Linux system with Ubuntu 16.04 LTS. The `g++` compiler with `c++11` support is required. Only the Praat binary is delivered, the other code is build natively by the installation script.
 Most tools (Praat, PENTAtrainer, NLopt, LIBSVM, etc.) are delivered with the source code and are compiled and installed in the local directory. Additionally, some other software is neccessary in order to run the code which is listed below. 
 
-Gnuplot: Is used for generating plots from different data.
+gnuplot: Is used for generating plots from different data.
 ```
 sudo apt-get install gnuplot
 ```
-XMLstarlet: Is a small command line tool for analyzing xml files which is used for configuration files.
+xmlstarlet: Is a small command line tool for analyzing xml files which is used for configuration files.
 ```
 sudo apt-get install xmlstarlet
 ```
+iconv: Converts the encoding of the target file generated from the praat script to the systems encoding. It is pre-installed on most Ubuntu systems.
 ## Installation
 Use the installation script for locally installing the external libraries and starting the build process.
 ```
@@ -56,3 +57,5 @@ Start the program by calling the shell-script with the path to the xml configura
 ```
 ./find-training-qta.sh <config-file.xml>
 ```
+## Miscellaneous
+If there are words with 'Umlaut' (ä,ö,ü), the target file returned from the Praat script will be encoded with UTF-16. Otherwise the encoding is UTF-8. `learnF0qta` uses the command line tool `iconv` for encoding conversion. The user should check the correct encoding for the used system. 

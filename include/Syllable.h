@@ -19,7 +19,7 @@ public:
 	Syllable(std::string);
 
 	// set additional syllable information
-	void determine_position_features(uint8_t numberSyl, uint8_t positionCur, uint8_t numberPhonPrev, uint8_t numberPhonNext);
+	void determine_position_features(uint8_t numberWord, uint8_t currWord,uint8_t numberSyl, uint8_t currSyl, uint8_t numberPhonPrev, uint8_t numberPhonNext);
 	void determine_accent_features(uint8_t prev, uint8_t current, uint8_t next);
 
 	// get functions
@@ -58,9 +58,6 @@ private:
 
 	// members: syllable feature vector
 	syllable_feature_vec m_features;
-
-	// member: glottal start syllable
-	bool m_glottal = false;
 };
 
 #endif /* SYLLABLE_H_ */

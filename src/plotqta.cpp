@@ -35,11 +35,11 @@ int main(int argc, char* argv[])
 		{
 			PlotFileGenerator(line, std::string(argv[2]));
 			++cnt;
-			std::cout <<"\r(plotqta) number of generated plots: " << cnt;
+			std::cout <<"\r\tnumber of generated plots: " << cnt;
 		}
 		catch (Exception &exception)
 		{
-			;//std::cout << exception.what() << std::endl;
+			std::cout << exception.what() << std::endl;
 		}
 	}
 	std::cout << std::endl;

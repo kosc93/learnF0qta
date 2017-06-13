@@ -27,7 +27,6 @@ private:
 	// members: vowel modifiers
 	modifier_t m_long = false;
 	modifier_t m_nasal = false;
-	modifier_t m_glottal = false;
 	modifier_t m_diphthong = false;
 	modifier_t m_diphthong2 = false;
 

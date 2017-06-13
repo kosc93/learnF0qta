@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
     			tokens.clear();
     		}
 
-    		std::cout << "(sampa2vec) Calculated " << cnt << " feature vectors successfully!" << std::endl;
+    		std::cout << "\tCalculated " << cnt << " feature vectors successfully!" << std::endl;
 		}
     	else
     	{

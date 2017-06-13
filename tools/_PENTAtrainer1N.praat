@@ -199,10 +199,11 @@ form PENTAtrainer
 		boolean Ignore_target_labels_in_Tier_2 1
 		boolean Use_final_velocity_to_constrain_slope 0
 		boolean Fix_strength_to_minimum_strength 0
+		real bound_shift 0
 endform
 
 if task = 3
-	printline (praat) Collecting data from all individual files ...
+	printline 'tab$' Collecting data from all individual files ...
 endif
 
 npoints = npoints_per_interval
@@ -267,7 +268,7 @@ for current_file from input_File_No to numberOfFiles
 endfor
 
 if task == 3
-	printline (praat) Ensenble files saved.
+	printline 'tab$' Ensemble files saved.
 endif
 
 procedure Labeling file_name$ file_extension$
@@ -1456,7 +1457,7 @@ procedure Target
 				endif	
 			else
 				if fileReadable("./findqta")
-					runSystem: "printf '\r(praat) calculated targets: 'cnt''"
+					runSystem: "printf '\r\tcalculated targets: 'cnt''"
 					system ./findqta ./
 				elsif fileReadable(".\findqta.exe")
 					system .\findqta .\

@@ -13,10 +13,9 @@ public:
 	void print_statistics();
 
 private:
-	// some helpers
-	void split( std::vector<std::string> & theStringVector, const  std::string  & theString, const  std::string  & theDelimiter);
-	double mean (std::vector<double> &data);
-	double variance (std::vector<double> &data);
+	// statistics
+	static double mean (std::vector<double> &data);
+	static double variance (std::vector<double> &data);
 
 	// analysis
 	void read_input_files();

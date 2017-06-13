@@ -28,8 +28,8 @@ void Syllable::determine_syllable_structure()
 
 	// determine onset, nucleus and coda by regex
 	std::string tmp_str (m_string);
-	std::regex vowels("(\\?)?[aAoeEiIOuUyY269@=](\\?|:|~|_\\^){0,3}[aAoeEiIOuUy269@=]?(\\?|:|~|_\\^){0,3}[aAoeEiIOuUy269@=]?(\\?|:|~|_\\^){0,3}");
-	std::regex consonants("((pf|ps|ts|tS|pS|dZ|p|b|t|d|k|g|f|v|s|z|S|Z|T|D|C|x|h|m|n|N|l|j|R|r)(_0)?)?");
+	std::regex vowels("[aAoeEiIOuUyY269@=](:|~|_\\^){0,3}[aAoeEiIOuUy269@=]?(:|~|_\\^){0,3}[aAoeEiIOuUy269@=]?(:|~|_\\^){0,3}");
+	std::regex consonants("((\\?|pf|ps|ts|tS|pS|dZ|p|b|t|d|k|g|f|v|s|z|S|Z|T|D|C|x|h|m|n|N|l|j|R|r)(_0)?)?");
 
 	// tokenize phonemes in onset
 	for (uint8_t i=0; i<NUM_PHONEMES_ONSET; ++i)
@@ -112,7 +112,7 @@ void Syllable::determine_accent_features(uint8_t prev, uint8_t current, uint8_t 
 	build_feature_vector();
 }
 
-void Syllable::determine_position_features(uint8_t numberSyl, uint8_t positionCur, uint8_t numberPhonPrev, uint8_t numberPhonNext)
+void Syllable::determine_position_features(uint8_t numberWord, uint8_t currWord,uint8_t numberSyl, uint8_t currSyl, uint8_t numberPhonPrev, uint8_t numberPhonNext)
 {
 	// count number of phonemes
 	uint8_t cntOnset = 0, cntCoda = 0;
@@ -132,12 +132,12 @@ void Syllable::determine_position_features(uint8_t numberSyl, uint8_t positionCu
 		}
 	}
 
-	m_positionVec = {numberSyl, positionCur, cntOnset, cntCoda, numberPhonPrev, numberPhonNext};
+	m_positionVec = {numberWord, currWord, numberSyl, currSyl, cntOnset, cntCoda, numberPhonPrev, numberPhonNext};
 
-	// words beginning with vowels become glottal
-	if (cntOnset == 0 && positionCur == 1)
+	// words beginning with vowels become glottal onset
+	if (cntOnset == 0 && currWord == 1 && currSyl == 1)
 	{
-		m_glottal = true;
+		m_onsetVec[2] = Consonant("?");
 	}
 
 	build_feature_vector();
@@ -166,19 +166,14 @@ void Syllable::build_feature_vector()
 			p1[0], p1[1], p1[2], p1[3], p1[4], p1[5], p1[6],
 			p2[0], p2[1], p2[2], p2[3], p2[4], p2[5], p2[6],
 			p3[0], p3[1], p3[2], p3[3], p3[4], p3[5], p3[6],
-			p4[0], p4[1], p4[2], p4[3], p4[4], p4[5], p4[6], p4[7],
+			p4[0], p4[1], p4[2], p4[3], p4[4],
 			p5[0], p5[1], p5[2], p5[3], p5[4], p5[5], p5[6],
 			p6[0], p6[1], p6[2], p6[3], p6[4], p6[5], p6[6],
 			p7[0], p7[1], p7[2], p7[3], p7[4], p7[5], p7[6],
 			p8[0], p8[1], p8[2], p8[3], p8[4], p8[5], p8[6],
 			a0[0], a0[1], a0[2],
-			p0[0], p0[1], p0[2], p0[3], p0[4], p0[5]
+			p0[0], p0[1], p0[2], p0[3], p0[4], p0[5] , p0[6] , p0[7]
 	};
-
-	if (m_glottal)
-	{
-		m_features[26] = 1;
-	}
 
 	// build output string
 	m_outputString = "";
@@ -218,37 +213,44 @@ void Syllable::print_debug()
 	std::cout << "] \t-->\t|";
 
 	// print phonetical features
-	for (int i=0; i<3; ++i)
+	for (uint8_t i=0; i<NUM_PHONEMES_ONSET; ++i)
 	{
-		for (int j=0; j<7; ++j)
+		for (uint8_t j=0; j<NUM_CONSONANT_FEATURES; ++j)
 		{
-			std::cout << m_features[j+i*7];
+			std::cout << m_features[j+i*NUM_CONSONANT_FEATURES];
 		}
 		std::cout << "|";
 	}
-	for (int i=3; i<4; ++i)
+	for (uint8_t i=NUM_PHONEMES_ONSET; i<NUM_PHONEMES_ONSET+NUM_PHONEMES_NUCLEUS; ++i)
 	{
-		for (int j=0; j<8; ++j)
+		for (uint8_t j=0; j<NUM_VOWEL_FEATURES; ++j)
 		{
-			std::cout << m_features[j+i*7];
+			std::cout << m_features[j+i*NUM_CONSONANT_FEATURES];
 		}
 		std::cout << "|";
 	}
-	for (int i=4; i<8; ++i)
+	for (uint8_t i=NUM_PHONEMES_ONSET+NUM_PHONEMES_NUCLEUS; i<NUM_PHONEMES; ++i)
 	{
-		for (int j=0; j<7; ++j)
+		for (uint8_t j=0; j<NUM_CONSONANT_FEATURES; ++j)
 		{
-			std::cout << m_features[j+i*7+1];
+			std::cout << m_features[j+i*NUM_CONSONANT_FEATURES-(NUM_CONSONANT_FEATURES-NUM_VOWEL_FEATURES)];
 		}
 		std::cout << "|";
 	}
 
 	// print accent features
-	std::cout << m_features[57] << m_features[58] << m_features[59] << "|";
+	for (uint8_t i=NUM_PHONETIC_FEATURES; i<NUM_PHONETIC_FEATURES+NUM_ACCENT_FEATURES; ++i)
+	{
+		std::cout << m_features[i];
+	}
+	std::cout << "|";
 
 	// print location features
-	std::cout << m_features[60] << m_features[61] << m_features[62] << m_features[63] << m_features[64] << m_features[65] << "|";
-
+	for (uint8_t i=NUM_PHONETIC_FEATURES+NUM_ACCENT_FEATURES; i<NUM_SYLLABLE_FEATURES; ++i)
+	{
+		std::cout << m_features[i];
+	}
+	std::cout << "|";
 	std::cout << std::endl;
 
 }

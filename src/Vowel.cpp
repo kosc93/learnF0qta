@@ -17,25 +17,10 @@ Vowel::Vowel(std::string input)
 void Vowel::determine_features()
 {
 	std::string tmp_str (m_string);
-	vowel_feature_vec diphthong, diphthong2;
-
-	// compute glottal vowel modifier
-	std::size_t position = tmp_str.find("?");
-	if (position!=std::string::npos)
-	{
-		if (position >= 0)
-		{
-			tmp_str.erase(position,1);
-			m_glottal = true;
-		}
-		else
-		{
-			throw Exception("Invalid glottal vowel transcription found: " + tmp_str);
-		}
-	}
+	vowel_feature_vec diphthongVowel {0}, diphthongVowel2 {0};
 
 	// compute long vowel modifier
-	position = tmp_str.find(":");
+	std::size_t position = tmp_str.find(":");
 	if (position!=std::string::npos)
 	{
 		if (position != 0)
@@ -72,7 +57,7 @@ void Vowel::determine_features()
 		{
 			tmp_str.erase(position,2);
 			m_diphthong = true;
-			diphthong = VOWELS.at(tmp_str.substr(0,1));
+			diphthongVowel = VOWELS.at(tmp_str.substr(0,1));
 			tmp_str.erase(0,1);
 		}
 		else
@@ -89,7 +74,7 @@ void Vowel::determine_features()
 		{
 			tmp_str.erase(position,2);
 			m_diphthong2 = true;
-			diphthong2 = VOWELS.at(tmp_str.substr(0,1));
+			diphthongVowel2 = VOWELS.at(tmp_str.substr(0,1));
 			tmp_str.erase(0,1);
 		}
 		else
@@ -124,33 +109,29 @@ void Vowel::determine_features()
 		m_features = VOWELS.at(tmp_str);
 		if (m_long)
 		{
-			m_features[3] = 1;
+			m_features[3]++;
 		}
 		if (m_nasal)
 		{
-			m_features[4] = 1;
-		}
-		if (m_glottal)
-		{
-			m_features[5] = 1;
+			m_features[4]++;
 		}
 		if (m_diphthong)
 		{
-			m_features[6] = 1;
+			m_features[3]++;
 			// calculate mean for diphthongs -> rounding problem?
 			if (m_diphthong2)
 			{
-				m_features[0] = (m_features[0] + diphthong[0] + diphthong2[0])/3.0;
-				m_features[1] = (m_features[1] + diphthong[1] + diphthong2[1])/3.0;
-				m_features[2] = (m_features[2] + diphthong[2] + diphthong2[2])/3.0;
+				m_features[3]++;
+				m_features[0] = (m_features[0] + diphthongVowel[0] + diphthongVowel2[0])/3.0;
+				m_features[1] = (m_features[1] + diphthongVowel[1] + diphthongVowel2[1])/3.0;
+				m_features[2] = (m_features[2] + diphthongVowel[2] + diphthongVowel2[2])/3.0;
 			}
 			else
 			{
-				m_features[0] = (m_features[0] + diphthong[0])*0.5;
-				m_features[1] = (m_features[1] + diphthong[1])*0.5;
-				m_features[2] = (m_features[2] + diphthong[2])*0.5;
+				m_features[0] = (m_features[0] + diphthongVowel[0])*0.5;
+				m_features[1] = (m_features[1] + diphthongVowel[1])*0.5;
+				m_features[2] = (m_features[2] + diphthongVowel[2])*0.5;
 			}
-
 		}
 	}
 	catch (std::exception& e)
@@ -160,22 +141,22 @@ void Vowel::determine_features()
 }
 
 const std::map<std::string, vowel_feature_vec> Vowel::VOWELS{
-		{"i" , {-2, 3, 0, 0, 0, 0, 0, 0} },
-		{"I" , {-1, 2, 0, 0, 0, 0, 0, 0} },
-		{"e" , {-2, 1, 0, 0, 0, 0, 0, 0} },
-		{"E" , {-2,-1, 0, 0, 0, 0, 0, 0} },
-		{"y" , {-2, 3, 1, 0, 0, 0, 0, 0} },
-		{"Y" , {-1, 2, 1, 0, 0, 0, 0, 0} },
-		{"2" , {-2, 1, 1, 0, 0, 0, 0, 0} },
-		{"9" , {-2,-1, 1, 0, 0, 0, 0, 0} },
-		{"@" , { 0, 0, 0, 0, 0, 0, 0, 0} },
-		{"6" , { 0,-2, 0, 0, 0, 0, 0, 0} },
-		{"a" , { 0,-3, 0, 0, 0, 0, 0, 0} },
-		{"A" , { 2,-3, 0, 0, 0, 0, 0, 0} },
-		{"u" , { 2, 3, 1, 0, 0, 0, 0, 0} },
-		{"U" , { 1, 2, 1, 0, 0, 0, 0, 0} },
-		{"o" , { 2, 1, 1, 0, 0, 0, 0, 0} },
-		{"O" , { 2,-1, 1, 0, 0, 0, 0, 0} },
-		{"=" , { 0, 0, 0, 0, 0, 0, 0, 1} }
+		{"i" , {-2, 3, 0, 0, 0} },
+		{"I" , {-1, 2, 0, 0, 0} },
+		{"e" , {-2, 1, 0, 0, 0} },
+		{"E" , {-2,-1, 0, 0, 0} },
+		{"y" , {-2, 3, 1, 0, 0} },
+		{"Y" , {-1, 2, 1, 0, 0} },
+		{"2" , {-2, 1, 1, 0, 0} },
+		{"9" , {-2,-1, 1, 0, 0} },
+		{"@" , { 0, 0, 0, 0, 0} },
+		{"6" , { 0,-2, 0, 0, 0} },
+		{"a" , { 0,-3, 0, 0, 0} },
+		{"A" , { 2,-3, 0, 0, 0} },
+		{"u" , { 2, 3, 1, 0, 0} },
+		{"U" , { 1, 2, 1, 0, 0} },
+		{"o" , { 2, 1, 1, 0, 0} },
+		{"O" , { 2,-1, 1, 0, 0} },
+		{"=" , { 0, 0, 0, 0, 0} }
 	};
 

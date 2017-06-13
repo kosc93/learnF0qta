@@ -1,25 +1,7 @@
 #include "FileAnalyzer.h"
+#include "StringOps.h"
+#include "Types.h"
 #include <cmath>
-
-void FileAnalyzer::split( std::vector<std::string> & theStringVector,  /* Altered/returned value */
-       const  std::string  & theString,
-       const  std::string  & theDelimiter)
-{
-    size_t  start = 0, end = 0;
-
-    while ( end != std::string::npos)
-    {
-        end = theString.find( theDelimiter, start);
-
-        // If at end, use length=maxLength.  Else use length=end-start.
-        theStringVector.push_back( theString.substr( start,
-                       (end == std::string::npos) ? std::string::npos : end - start));
-
-        // If at end, use start=maxSize.  Else use start=end+delimiter.
-        start = (   ( end > (std::string::npos - theDelimiter.size()) )
-                  ?  std::string::npos  :  end + theDelimiter.size());
-    }
-}
 
 double FileAnalyzer::mean (std::vector<double> &data)
 {
@@ -104,7 +86,7 @@ void FileAnalyzer::write_to_output_file()
 	fout.open (m_trainingFile);
 
 	// write header to outputfile
-	fout << "word,S1,N1,P1,F1,G1,L1,O1,S2,N2,P2,F2,G2,L2,O2,S3,N3,P3,F3,G3,L3,O3,ZP,ZH,LR,LL,NL,GT,DT,SK,S4,N4,P4,F4,G4,L4,O4,S5,N5,P5,F5,G5,L5,O5,S6,N6,P6,F6,G6,L6,O6,S7,N7,P7,F7,G7,L7,O7,AA,AV,AF,AS,NS,PO,PC,PV,PF,F_i,m_,b_,l_,d_,rmse,corr" << std::endl;
+	fout << "word,S1,N1,P1,F1,G1,L1,O1,S2,N2,P2,F2,G2,L2,O2,S3,N3,P3,F3,G3,L3,O3,ZP,ZH,LR,LL,NL,S4,N4,P4,F4,G4,L4,O4,S5,N5,P5,F5,G5,L5,O5,S6,N6,P6,F6,G6,L6,O6,S7,N7,P7,F7,G7,L7,O7,AA,AV,AF,WA,WN,AS,NS,PO,PC,PV,PF,F_i,m_,b_,l_,d_,rmse,corr" << std::endl;
 
 	// write data to output file
 	for (std::map<std::string,std::string>::iterator it=m_featureMap.begin(); it!=m_featureMap.end(); ++it)
@@ -118,9 +100,8 @@ void FileAnalyzer::write_to_output_file()
 			split(targetsAll, (m_targetMap.find(it->first))->second, "\t");
 
 			// get number of syllables
-			const int numFea = 66;
 			const int numTar = 6;
-			int numSyl = featuresAll.size()/numFea;
+			int numSyl = featuresAll.size()/NUM_SYLLABLE_FEATURES;
 
 			// produce one output line for each syllable
 			for (int i=0; i<numSyl; ++i)
@@ -128,9 +109,9 @@ void FileAnalyzer::write_to_output_file()
 				fout << it->first << ",";
 
 				// get relevant features
-				for (int j=0; j<numFea; ++j)
+				for (int j=0; j<NUM_SYLLABLE_FEATURES; ++j)
 				{
-					fout << featuresAll[j+i*numFea] << ",";
+					fout << featuresAll[j+i*NUM_SYLLABLE_FEATURES] << ",";
 				}
 
 				// get relevant data from target file: initialf0,mean_rmse,grand_correlation,1__slope,height,strength,duration,rmse,correlation
@@ -151,14 +132,14 @@ void FileAnalyzer::write_to_output_file()
 void FileAnalyzer::print_statistics()
 {
 	// print processing information
-	std::cout << "(linkdata) Number of processed words:\t\t" << std::min(m_targetMap.size(),m_featureMap.size()) << std::endl;
-	std::cout << "(linkdata) Number of non-processed words:\t" << std::abs(m_targetMap.size()-m_featureMap.size()) << std::endl;
-	std::cout << "(linkdata) Number of assembled syllables:\t" << m_slope.size() << std::endl;
+	std::cout << "\tNumber of processed words:\t" << std::min(m_targetMap.size(),m_featureMap.size()) << std::endl;
+	std::cout << "\tNumber of non-processed words:\t" << std::abs((int)m_targetMap.size()-(int)m_featureMap.size()) << std::endl;
+	std::cout << "\tNumber of assembled syllables:\t" << m_slope.size() << std::endl;
 
 	// print statistics
-	std::cout << "(statistics) Slope (m):\t\t\t\t" << mean(m_slope) << " +/- " << variance(m_slope) << std::endl;
-	std::cout << "(statistics) Offset (b):\t\t\t" << mean(m_offset) << " +/- " << variance(m_offset) << std::endl;
-	std::cout << "(statistics) Strength (lambda):\t\t\t" << mean(m_strength) << " +/- " << variance(m_strength) << std::endl;
-	std::cout << "(statistics) Root-Mean-Square-Error:\t\t" << mean(m_rmse) << " +/- " << variance(m_rmse) << std::endl;
-	std::cout << "(statistics) Correlation-Coefficient:\t\t" << mean(m_corr) << " +/- " << variance(m_corr) << std::endl;
+	std::cout << "\tSlope (m):\t\t\t" << mean(m_slope) << " +/- " << variance(m_slope) << std::endl;
+	std::cout << "\tOffset (b):\t\t\t" << mean(m_offset) << " +/- " << variance(m_offset) << std::endl;
+	std::cout << "\tStrength (lambda):\t\t" << mean(m_strength) << " +/- " << variance(m_strength) << std::endl;
+	std::cout << "\tRoot-Mean-Square-Error:\t\t" << mean(m_rmse) << " +/- " << variance(m_rmse) << std::endl;
+	std::cout << "\tCorrelation-Coefficient:\t" << mean(m_corr) << " +/- " << variance(m_corr) << std::endl;
 }
