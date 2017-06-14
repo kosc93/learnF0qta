@@ -1605,9 +1605,9 @@ procedure Target
 			silence_duration = end - start			
 		endif
 	endfor
-	#filedelete 'directory$'config
-	#filedelete 'directory$'data
-	#filedelete 'directory$'output
+	filedelete 'directory$'config
+	filedelete 'directory$'data
+	filedelete 'directory$'output
 	select TableOfReal fittedf0
 	if nrows > 1
 		Remove row (index)... nrows + 1

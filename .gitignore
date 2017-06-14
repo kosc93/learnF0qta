@@ -33,3 +33,12 @@ bin/*
 .settings/*
 .cproject
 .project
+
+# test
+*.txt
+*.result
+*.png
+test/FEATURES.csv
+test/TARGETS.csv
+test/TRAINING.csv
+test/plots/*
