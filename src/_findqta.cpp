@@ -19,15 +19,28 @@ int main(int argc, char* argv[])
 {
 	/********** Command Line Arguments **********/
 	std::string path ("./");
+	unsigned int algNum (34);
+	unsigned int itNum (10);
 
 	// determine command line arguments
-	if (argc > 2)
+	if (argc > 4)
 	{
 		std::cerr << "ERROR: wrong command line arguments" << std::endl;
-		std::cerr << "Usage: " << argv[0] << " <DIRECTORY> " << std::endl;
+		std::cerr << "Usage: " << argv[0] << " <DIRECTORY> <ALGORITHM> <ITERATIONS>" << std::endl;
 		return 1;
 	}
-	if (argc > 1)
+	else if (argc > 3)
+	{
+		path = std::string(argv[1]);
+		algNum = std::stoi((std::string(argv[2])));
+		itNum = std::stoi((std::string(argv[3])));
+	}
+	else if (argc > 2)
+	{
+		path = std::string(argv[1]);
+		algNum = std::stoi((std::string(argv[2])));
+	}
+	else if (argc > 1)
 	{
 		path = std::string(argv[1]);
 	}
@@ -53,7 +66,7 @@ int main(int argc, char* argv[])
 	globalOpt.set_maxtime(5);
 
 	// local optimizer
-	nlopt::opt localOpt(nlopt::LN_BOBYQA, 3);  // LN_NELDERMEAD
+	nlopt::opt localOpt((nlopt::algorithm)algNum, 3);  // LN_NELDERMEAD=28, LN_BOBYQA=34
 	localOpt.set_min_objective(system.error_function, (SystemTA*) &system);
 	localOpt.set_xtol_rel(1e-4);
 	localOpt.set_lower_bounds(lowerBounds);
@@ -73,7 +86,7 @@ int main(int argc, char* argv[])
 		// local optimization with random guesses
 		std::vector<double> xtmp;
 		double ftmp;
-		for (int i=0; i<5; ++i)
+		for (unsigned int i=0; i<itNum; ++i)
 		{
 			xtmp = {searchBounds[0]+((double)rand()/RAND_MAX)*(searchBounds[1]-searchBounds[0]), searchBounds[2]+((double)rand()/RAND_MAX)*(searchBounds[3]-searchBounds[2]), searchBounds[4]+((double)rand()/RAND_MAX)*(searchBounds[5]-searchBounds[4])};
 			localOpt.optimize(xtmp, ftmp);

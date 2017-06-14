@@ -11,7 +11,7 @@
 		<strengthmax>300</strengthmax>
 	</praat>
 	<optimization>
-		<randominit>50</randominit>
-		<algorithm>LN_NELDERMEAD</algorithm>
+		<randominit>5</randominit>
+		<algorithm>34</algorithm>
 	</optimization>
 </config>

@@ -200,6 +200,8 @@ form PENTAtrainer
 		boolean Use_final_velocity_to_constrain_slope 0
 		boolean Fix_strength_to_minimum_strength 0
 		real bound_shift 0
+		integer algorithm 34
+		integer random_iterations 10
 endform
 
 if task = 3
@@ -1461,7 +1463,7 @@ procedure Target
 			else
 				if fileReadable("./findqta")
 					runSystem: "printf '\r\tcalculated targets: 'cnt''"
-					system ./findqta ./
+					runSystem: "./findqta ./ 'algorithm' 'random_iterations'"
 				elsif fileReadable(".\findqta.exe")
 					system .\findqta .\
 				else

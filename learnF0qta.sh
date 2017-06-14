@@ -13,6 +13,9 @@ then
 	N="$( xmlstarlet sel -t -v 'config/praat/systemorder' "$1" )"
 	sshift="$( xmlstarlet sel -t -v 'config/praat/syllableshift' "$1" )"
 
+	algo="$( xmlstarlet sel -t -v 'config/optimization/algorithm' "$1" )"
+	iter="$( xmlstarlet sel -t -v 'config/optimization/randominit' "$1" )"
+
 	##### define output file #####
 	filename=$(basename $1 .xml)
 	output=$path/../$filename.results
@@ -22,17 +25,19 @@ then
 	printf '\toffset\t [%s%s] st\n' "$bmin,$bmax" | tee -a $output
 	printf '\tstrength [%s%s] 1/sec\n' "$lmin,$lmax" | tee -a $output
 	printf '\torder\t %s\n' "$N" | tee -a $output
-	printf '\tshift\t %s ms\n\n' "$sshift" | tee -a $output
+	printf '\tshift\t %s \n' "$sshift" | tee -a $output
+	printf '\talgorithm\t %s \n' "$algo" | tee -a $output
+	printf '\trandom-iter\t %s \n\n' "$iter" | tee -a $output
 
 	##### get targets and generate plots #####
 	cp tools/_PENTAtrainer1N.praat $path
 	cp bin/findqta $path
 
 	printf ">>> [praat] process annotated audio files ... \n" | tee -a $output
-	tools/praat --run $path/_PENTAtrainer1N.praat 1 \"label\" \"Process all sounds without pause\" 100 600 10 100 0 -0.03 0.07 \"yes\" $mmin $mmax $bmin $bmax $lmin $lmax 150 $N \"no\" \"qTA_synthesis\" \"sil\" \"yes\" \"no\" no $sshift
+	tools/praat --run $path/_PENTAtrainer1N.praat 1 \"label\" \"Process all sounds without pause\" 100 600 10 100 0 -0.03 0.07 \"yes\" $mmin $mmax $bmin $bmax $lmin $lmax 150 $N \"no\" \"qTA_synthesis\" \"sil\" \"yes\" \"no\" no $sshift $algo $iter
 
 	printf "\n\n>>> [praat] generate ensemble files ... \n" | tee -a $output
-	tools/praat --run $path/_PENTAtrainer1N.praat 1 \"label\" \"Get emsemble files\" 100 600 10 100 0 -0.03 0.07 \"yes\" $mmin $mmax $bmin $bmax $lmin $lmax 150 $N \"no\" \"qTA_synthesis\" \"sil\" \"yes\" \"no\" no $sshift | tee -a $output
+	tools/praat --run $path/_PENTAtrainer1N.praat 1 \"label\" \"Get emsemble files\" 100 600 10 100 0 -0.03 0.07 \"yes\" $mmin $mmax $bmin $bmax $lmin $lmax 150 $N \"no\" \"qTA_synthesis\" \"sil\" \"yes\" \"no\" no $sshift $algo $iter | tee -a $output
 
 	printf "\n>>> [iconv] convert encoding of target ensemble file ... \n" | tee -a $output
 	iconv -f UTF-16 -t UTF-8 $path/targets.txt > $path/../TARGETS.csv | tee -a $output
