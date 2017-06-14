@@ -47,8 +47,8 @@ Put all the files of the annotated corpus in a directory e.g. called `corpus/`. 
 		<strengthmax>300</strengthmax>
 	</praat>
 	<optimization>
-		<randominit>50</randominit>
-		<algorithm>LN_NELDERMEAD</algorithm>
+		<randominit>10</randominit>
+		<algorithm>34</algorithm>
 	</optimization>
 </config>
 ```
@@ -72,7 +72,7 @@ Start the program by calling the shell-script with the path to the xml configura
 ```
 All the calculated results are found in the parent directory of the defined path to corpus in the xml config file. Additionally, a directory `plots` is created containing a plot for each original file which looks as the following:
 
-![qTA resynthesis](.example.png?raw=true)
+![qTA resynthesis](example.png?raw=true)
  
 ## Miscellaneous
 If there are words with 'Umlaut' (ä,ö,ü), the target file returned from the Praat script will be encoded with UTF-16. Otherwise the encoding is UTF-8. `learnF0qta` uses the command line tool `iconv` for encoding conversion. The user should check the correct encoding for the used system. 
