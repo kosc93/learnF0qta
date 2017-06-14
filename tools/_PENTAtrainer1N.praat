@@ -293,6 +293,9 @@ procedure Labeling file_name$ file_extension$
 	elsif fileReadable ("'directory$''name$'.TextGrid") or fileReadable ("'directory$''name$'.'TextGrid_extension$'")
 		if fileReadable ("'directory$''name$'.TextGrid")
 			Read from file... 'directory$''name$'.TextGrid
+			# Patrick Schmager
+			select TextGrid 'name$'
+			Shift times by... -(bound_shift/1000)
 		endif
 		if fileReadable ("'directory$''name$'.'TextGrid_extension$'")
 			Read from file... 'directory$''name$'.'TextGrid_extension$'

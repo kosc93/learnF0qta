@@ -52,6 +52,7 @@ Bett,bEt,4
 Eleganz,e.le.g"ants,224
 Gerät,g@.R"E:t,14
 ```
+A complete example is included in the `test` directory and can be executed by `make test`.
 ## Usage
 Start the program by calling the shell-script with the path to the xml configuration file as command line parameter.
 ```

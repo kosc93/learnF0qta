@@ -30,6 +30,8 @@ private:
 	std::vector<double> m_duration;
 	std::vector<double> m_rmse;
 
+	double m_rmseMean;
+
 };
 
 #endif /* PLOTFILEGENERATOR_H_ */

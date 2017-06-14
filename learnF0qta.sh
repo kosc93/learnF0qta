@@ -46,6 +46,9 @@ then
 	printf "\n>>> [linkqta] link features with targets and get statistics... \n"
 	bin/linkqta $path/../FEATURES.csv $path/../TARGETS.csv $path/../TRAINING.csv
 
+	##### remove unneccessary files #####
+	rm $path/*.target
+
 	ELAPSED_TIME=$(($SECONDS - $START_TIME))
 	echo
 	echo ">>> $(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec <<<"

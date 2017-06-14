@@ -77,6 +77,14 @@ void PlotFileGenerator::analyze_target_line()
 		m_duration.push_back(m_targetLineValues[i+3]);
 		m_rmse.push_back(m_targetLineValues[i+4]);
 	}
+
+	// calculate rmseMean
+	m_rmseMean = 0;
+	for (unsigned int i=0; i<m_rmse.size(); ++i)
+	{
+		m_rmseMean += m_rmse[i];
+	}
+	m_rmseMean /= m_rmse.size();
 }
 
 void PlotFileGenerator::generate_plot_file()
@@ -99,11 +107,11 @@ void PlotFileGenerator::generate_plot_file()
 	fout << "set output '../plots/" << m_name <<".png'" << std::endl;
 
 	// write general plot settings to plot file
-	fout << std::endl << "###### general settings #####" << std::endl;
+	fout << std::endl << "##### general settings #####" << std::endl;
 	fout << "stats '" << m_name <<".semitonef0' using 2:3 nooutput" << std::endl;
 	fout << "set xrange [STATS_min_x:STATS_max_x]" << std::endl;
 	fout << "set yrange [STATS_min_y-2:STATS_max_y+2]" << std::endl;
-	fout << "set title 'F0 - " << m_name <<"'" << std::endl;
+	fout << "set title 'F0 - " << m_name <<" (rmse=" << m_rmseMean <<")'" << std::endl;
 	fout << "set xlabel 'Time [sec]'" << std::endl;
 	fout << "set ylabel 'Frequency [st]'" << std::endl;
 	fout << "set datafile missing '0'" << std::endl;
