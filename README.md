@@ -15,11 +15,11 @@ sudo apt-get install xmlstarlet
 ```
 Additionally, the following command line tools which are pre-installed on every Ubuntu system are usedin the shell script.
 
-`iconv`: Converts the encoding of the target file generated from the praat script to the systems encoding.__
-`baseline`: extract filename from a given path__
-`tee`: redirect output to a file AND stdout__
-`cp`: copy file__
-`mkdir`: create a directory__
+`iconv`: Converts the encoding of the target file generated from the praat script to the systems encoding. ...
+`baseline`: extract filename from a given path...
+`tee`: redirect output to a file AND stdout...
+`cp`: copy file...
+`mkdir`: create a directory...
 `printf`: write to stdout
 ## Installation
 Use the installation script for locally installing the external libraries and starting the build process.
