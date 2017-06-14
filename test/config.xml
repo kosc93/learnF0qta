@@ -1,5 +1,5 @@
 <config>
-	<path>/home/patrick/Documents/Diplomarbeit/03_Software/03_Entwicklung/learnF0qta/test/corpus</path>
+	<path>test/corpus</path>
 	<praat>
 		<systemorder>5</systemorder>
 		<syllableshift>30</syllableshift>

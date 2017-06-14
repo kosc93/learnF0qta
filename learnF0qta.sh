@@ -25,7 +25,7 @@ then
 	printf '\toffset\t [%s%s] st\n' "$bmin,$bmax" | tee -a $output
 	printf '\tstrength [%s%s] 1/sec\n' "$lmin,$lmax" | tee -a $output
 	printf '\torder\t %s\n' "$N" | tee -a $output
-	printf '\tshift\t %s \n' "$sshift" | tee -a $output
+	printf '\tshift\t %s ms\n' "$sshift" | tee -a $output
 	printf '\talgorithm\t %s \n' "$algo" | tee -a $output
 	printf '\trandom-iter\t %s \n\n' "$iter" | tee -a $output
 
@@ -57,7 +57,7 @@ then
 
 	##### remove unneccessary files #####
 	printf "\n>>> [rm] remove unneccessary files ... \n" | tee -a $output
-	rm $path/*.actutimenormf0 $path/*.f0 $path/*.f0velocity $path/*.means $path/*.normtimef0 $path/*.PitchTier $path/*.PitchTier_semitone $path/*.plot $path/*.primitive_code $path/*.qTAf0 $path/*.qTAvelocity $path/*.rawf0 $path/*.samplef0 $path/*.semitonef0 $path/*.smoothf0 $path/*.target
+	rm $path/*.actutimenormf0; rm $path/*.f0; rm $path/*.f0velocity; rm $path/*.means; rm $path/*.normtimef0; rm $path/*.PitchTier; rm $path/*.PitchTier_semitone; rm $path/*.plot; rm $path/*.primitive_code; rm $path/*.qTAf0; rm $path/*.qTAvelocity; rm $path/*.rawf0; rm $path/*.samplef0; rm $path/*.semitonef0; rm $path/*.smoothf0; rm $path/*.target
 
 	ELAPSED_TIME=$(($SECONDS - $START_TIME))
 	echo 
