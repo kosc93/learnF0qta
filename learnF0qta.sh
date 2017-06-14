@@ -20,7 +20,7 @@ then
 	filename=$(basename $1 .xml)
 	output=$path/../$filename.results
 
-	printf '\n>>> [xml] reading configuration file ... \n' | tee -a $output
+	printf '\n>>> [xml] reading configuration file ... \n' | tee $output
 	printf '\tslope\t [%s%s] st/sec\n' "$mmin,$mmax" | tee -a $output
 	printf '\toffset\t [%s%s] st\n' "$bmin,$bmax" | tee -a $output
 	printf '\tstrength [%s%s] 1/sec\n' "$lmin,$lmax" | tee -a $output

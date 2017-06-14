@@ -1074,3 +1074,39 @@
 
 >>> [rm] remove unneccessary files ... 
 >>> 0 min 2 sec <<<
+
+>>> [xml] reading configuration file ... 
+	slope	 [-110,110] st/sec
+	offset	 [-60,60] st
+	strength [1,300] 1/sec
+	order	 5
+	shift	 30 
+	algorithm	 34 
+	random-iter	 5 
+
+>>> [praat] process annotated audio files ... 
+
+
+>>> [praat] generate ensemble files ... 
+	 Collecting data from all individual files ...
+	 Ensemble files saved.
+
+>>> [iconv] convert encoding of target ensemble file ... 
+
+>>> [plotqta] generating plots ... 
+
+>>> [sampa2vec] calculate feature vectors ... 
+	Calculated 6 feature vectors successfully!
+
+>>> [linkqta] link features with targets and get statistics... 
+	Number of processed words:	6
+	Number of non-processed words:	0
+	Number of assembled syllables:	12
+	Slope (m):			1.62639 +/- 1197.79
+	Offset (b):			-5.01743 +/- 98.7325
+	Strength (lambda):		62.1142 +/- 1404.04
+	Root-Mean-Square-Error:		0.159755 +/- 0.0151715
+	Correlation-Coefficient:	0.987782 +/- 0.000206076
+
+>>> [rm] remove unneccessary files ... 
+>>> 0 min 2 sec <<<
