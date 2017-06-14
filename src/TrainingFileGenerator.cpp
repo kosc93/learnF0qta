@@ -1,36 +1,9 @@
-#include "FileAnalyzer.h"
-#include "StringOps.h"
-#include "Types.h"
+#include "TrainingFileGenerator.h"
+#include "utilities.h"
+#include "types.h"
 #include <cmath>
 
-double FileAnalyzer::mean (std::vector<double> &data)
-{
-	double meanVal = 0.0;
-	unsigned int size = data.size();
-
-	for (unsigned int i=0; i<size; ++i)
-	{
-		meanVal += data[i];
-	}
-
-	return (meanVal/size);
-}
-
-double FileAnalyzer::variance (std::vector<double> &data)
-{
-	double varianceVal = 0.0;
-	double meanVal = mean(data);
-	unsigned int size = data.size();
-
-	for (unsigned int i=0; i<size; ++i)
-	{
-		varianceVal += std::pow((data[i] - meanVal),2);
-	}
-
-	return (varianceVal/size);
-}
-
-FileAnalyzer::FileAnalyzer(std::string featureFile, std::string targetFile, std::string trainingFile)
+TrainingFileGenerator::TrainingFileGenerator(std::string featureFile, std::string targetFile, std::string trainingFile)
 {
 	m_featureFile = featureFile;
 	m_targetFile = targetFile;
@@ -40,7 +13,7 @@ FileAnalyzer::FileAnalyzer(std::string featureFile, std::string targetFile, std:
 	write_to_output_file();
 }
 
-void FileAnalyzer::read_input_files()
+void TrainingFileGenerator::read_input_files()
 {
 	// create a file-reading object for feature-file
 	std::ifstream finFeatures;
@@ -79,7 +52,7 @@ void FileAnalyzer::read_input_files()
 	}
 }
 
-void FileAnalyzer::write_to_output_file()
+void TrainingFileGenerator::write_to_output_file()
 {
 	// create output file and write results to it
 	std::ofstream fout;
@@ -95,9 +68,9 @@ void FileAnalyzer::write_to_output_file()
 		{
 			// tokenize strings
 			std::vector<std::string> featuresAll;
-			split(featuresAll, it->second, ",");
+			utilities::split(featuresAll, it->second, ",");
 			std::vector<std::string> targetsAll;
-			split(targetsAll, (m_targetMap.find(it->first))->second, "\t");
+			utilities::split(targetsAll, (m_targetMap.find(it->first))->second, "\t");
 
 			// get number of syllables
 			const int numTar = 6;
@@ -129,7 +102,7 @@ void FileAnalyzer::write_to_output_file()
 	}
 }
 
-void FileAnalyzer::print_statistics()
+void TrainingFileGenerator::print_statistics()
 {
 	// print processing information
 	std::cout << "\tNumber of processed words:\t" << std::min(m_targetMap.size(),m_featureMap.size()) << std::endl;
@@ -137,9 +110,9 @@ void FileAnalyzer::print_statistics()
 	std::cout << "\tNumber of assembled syllables:\t" << m_slope.size() << std::endl;
 
 	// print statistics
-	std::cout << "\tSlope (m):\t\t\t" << mean(m_slope) << " +/- " << variance(m_slope) << std::endl;
-	std::cout << "\tOffset (b):\t\t\t" << mean(m_offset) << " +/- " << variance(m_offset) << std::endl;
-	std::cout << "\tStrength (lambda):\t\t" << mean(m_strength) << " +/- " << variance(m_strength) << std::endl;
-	std::cout << "\tRoot-Mean-Square-Error:\t\t" << mean(m_rmse) << " +/- " << variance(m_rmse) << std::endl;
-	std::cout << "\tCorrelation-Coefficient:\t" << mean(m_corr) << " +/- " << variance(m_corr) << std::endl;
+	std::cout << "\tSlope (m):\t\t\t" << utilities::mean(m_slope) << " +/- " << utilities::variance(m_slope) << std::endl;
+	std::cout << "\tOffset (b):\t\t\t" << utilities::mean(m_offset) << " +/- " << utilities::variance(m_offset) << std::endl;
+	std::cout << "\tStrength (lambda):\t\t" << utilities::mean(m_strength) << " +/- " << utilities::variance(m_strength) << std::endl;
+	std::cout << "\tRoot-Mean-Square-Error:\t\t" << utilities::mean(m_rmse) << " +/- " << utilities::variance(m_rmse) << std::endl;
+	std::cout << "\tCorrelation-Coefficient:\t" << utilities::mean(m_corr) << " +/- " << utilities::variance(m_corr) << std::endl;
 }

@@ -47,7 +47,8 @@ then
 	bin/linkqta $path/../FEATURES.csv $path/../TARGETS.csv $path/../TRAINING.csv
 
 	##### remove unneccessary files #####
-	rm $path/*.target
+	printf "\n>>> [rm] remove unneccessary files ... \n"
+	rm $path/*.actutimenormf0 $path/*.f0 $path/*.f0velocity $path/*.means $path/*.normtimef0 $path/*.PitchTier $path/*.PitchTier_semitone $path/*.plot $path/*.primitive_code $path/*.qTAf0 $path/*.qTAvelocity $path/*.rawf0 $path/*.samplef0 $path/*.semitonef0 $path/*.smoothf0 $path/*.target
 
 	ELAPSED_TIME=$(($SECONDS - $START_TIME))
 	echo

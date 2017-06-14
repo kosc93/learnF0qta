@@ -17,7 +17,7 @@ Vowel::Vowel(std::string input)
 void Vowel::determine_features()
 {
 	std::string tmp_str (m_string);
-	vowel_feature_vec diphthongVowel {0}, diphthongVowel2 {0};
+	vowelFeatures_t diphthongVowel {0}, diphthongVowel2 {0};
 
 	// compute long vowel modifier
 	std::size_t position = tmp_str.find(":");
@@ -140,7 +140,7 @@ void Vowel::determine_features()
 	}
 }
 
-const std::map<std::string, vowel_feature_vec> Vowel::VOWELS{
+const std::map<std::string, vowelFeatures_t> Vowel::VOWELS{
 		{"i" , {-2, 3, 0, 0, 0} },
 		{"I" , {-1, 2, 0, 0, 0} },
 		{"e" , {-2, 1, 0, 0, 0} },

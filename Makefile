@@ -13,19 +13,19 @@ INC := -I include
 
 all: ${EXECUTABLES}
 
-$(BINDIR)/sampa2vec: $(BUILDDIR)/sampa2vec.o $(BUILDDIR)/Word.o $(BUILDDIR)/Syllable.o $(BUILDDIR)/Vowel.o $(BUILDDIR)/Consonant.o $(BUILDDIR)/StringOps.o
+$(BINDIR)/sampa2vec: $(BUILDDIR)/sampa2vec.o $(BUILDDIR)/Word.o $(BUILDDIR)/Syllable.o $(BUILDDIR)/Vowel.o $(BUILDDIR)/Consonant.o $(BUILDDIR)/utilities.o
 	@echo " Linking" $@ "... "
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm -lnlopt
 
-$(BINDIR)/findqta: $(BUILDDIR)/findqta.o $(BUILDDIR)/ApproximationSystem.o $(BUILDDIR)/PraatFileIO.o
+$(BINDIR)/findqta: $(BUILDDIR)/findqta.o $(BUILDDIR)/SystemTA.o $(BUILDDIR)/PraatFileIO.o $(BUILDDIR)/utilities.o
 	@echo " Linking" $@ "... "
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm -lnlopt
 
-$(BINDIR)/linkqta: $(BUILDDIR)/linkqta.o $(BUILDDIR)/FileAnalyzer.o $(BUILDDIR)/StringOps.o
+$(BINDIR)/linkqta: $(BUILDDIR)/linkqta.o $(BUILDDIR)/TrainingFileGenerator.o $(BUILDDIR)/utilities.o
 	@echo " Linking" $@ "... "
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
 
-$(BINDIR)/plotqta: $(BUILDDIR)/plotqta.o $(BUILDDIR)/PlotFileGenerator.o
+$(BINDIR)/plotqta: $(BUILDDIR)/plotqta.o $(BUILDDIR)/PlotFileGenerator.o $(BUILDDIR)/utilities.o
 	@echo " Linking" $@ "... "
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
 

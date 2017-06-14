@@ -7,7 +7,8 @@
 
 #include <iostream>
 #include <string>
-#include "FileAnalyzer.h"
+
+#include "TrainingFileGenerator.h"
 
 int main(int argc, char* argv[])
 {
@@ -19,7 +20,7 @@ int main(int argc, char* argv[])
 	}
 
 	std::string featureFile (argv[1]), targetFile (argv[2]), trainingFile (argv[3]);
-	FileAnalyzer readWrite (featureFile, targetFile, trainingFile);
+	TrainingFileGenerator readWrite (featureFile, targetFile, trainingFile);
 	readWrite.print_statistics();
 
 	return 0;

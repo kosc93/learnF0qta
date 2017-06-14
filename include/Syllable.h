@@ -8,7 +8,7 @@
 #ifndef SYLLABLE_H_
 #define SYLLABLE_H_
 
-#include "Types.h"
+#include "types.h"
 #include "Vowel.h"
 #include "Consonant.h"
 #include <string>
@@ -19,12 +19,12 @@ public:
 	Syllable(std::string);
 
 	// set additional syllable information
-	void determine_position_features(uint8_t numberWord, uint8_t currWord,uint8_t numberSyl, uint8_t currSyl, uint8_t numberPhonPrev, uint8_t numberPhonNext);
-	void determine_accent_features(uint8_t prev, uint8_t current, uint8_t next);
+	void determine_position_features(int16_t numberWord, int16_t currWord,int16_t numberSyl, int16_t currSyl, int16_t numberPhonPrev, int16_t numberPhonNext);
+	void determine_accent_features(int16_t prev, int16_t current, int16_t next);
 
 	// get functions
-	syllable_feature_vec get_features() { build_feature_vector(); return m_features; };
-	uint8_t get_number_phonemes() {return m_numberPhonemes; };
+	syllableFeatures_t get_features() { build_feature_vector(); return m_features; };
+	uint16_t get_number_phonemes() {return m_numberPhonemes; };
 	std::string get_output_string () { return m_outputString; };
 
 	// print feature vector
@@ -42,22 +42,22 @@ private:
 	// members: syllable string
 	std::string m_string;
 	std::string m_outputString;
-	std::vector<std::string> m_stringVec;
+	stringVec_t m_stringVec;
 
 	// members: phonetic features
 	std::vector<Consonant>	m_onsetVec;
 	std::vector<Vowel> 		m_nucleusVec;
 	std::vector<Consonant>	m_codaVec;
-	uint8_t m_numberPhonemes = 0;
+	uint16_t m_numberPhonemes = 0;
 
 	// members: accent features (zero initialized)
-	accent_feature_vec m_accentVec;
+	accentFeatures_t m_accentVec;
 
 	// members: position features (zero initialized)
-	position_feature_vec m_positionVec;
+	positionFeatures_t m_positionVec;
 
 	// members: syllable feature vector
-	syllable_feature_vec m_features;
+	syllableFeatures_t m_features;
 };
 
 #endif /* SYLLABLE_H_ */

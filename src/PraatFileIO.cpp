@@ -12,28 +12,9 @@
 #include <iomanip>
 
 #include "PraatFileIO.h"
+#include "utilities.h"
 
-void PraatFileIO::split( std::vector<std::string> & theStringVector,  /* Altered/returned value */
-       const  std::string  & theString,
-       const  std::string  & theDelimiter)
-{
-    size_t  start = 0, end = 0;
-
-    while ( end != std::string::npos)
-    {
-        end = theString.find( theDelimiter, start);
-
-        // If at end, use length=maxLength.  Else use length=end-start.
-        theStringVector.push_back( theString.substr( start,
-                       (end == std::string::npos) ? std::string::npos : end - start));
-
-        // If at end, use start=maxSize.  Else use start=end+delimiter.
-        start = (   ( end > (std::string::npos - theDelimiter.size()) )
-                  ?  std::string::npos  :  end + theDelimiter.size());
-    }
-}
-
-PraatFileIO::PraatFileIO(ApproximationSystem &system, std::string &path)
+PraatFileIO::PraatFileIO(SystemTA &system, std::string &path)
 {
 	m_path = path;
 	analyze_config_file(system);
@@ -41,7 +22,7 @@ PraatFileIO::PraatFileIO(ApproximationSystem &system, std::string &path)
 
 }
 
-void PraatFileIO::analyze_config_file(ApproximationSystem &system)
+void PraatFileIO::analyze_config_file(SystemTA &system)
 {
 	// create a file-reading object
 	std::ifstream fin;
@@ -60,21 +41,21 @@ void PraatFileIO::analyze_config_file(ApproximationSystem &system)
 
 	// first line
 	std::getline(fin, line);
-	split(tokens, line, " ");
+	utilities::split(tokens, line, " ");
 	searchBounds.push_back(std::stod(tokens[0])); // m_min
 	searchBounds.push_back(std::stod(tokens[1])); // m_max,
 	tokens.clear();
 
 	// second line
 	std::getline(fin, line);
-	split(tokens, line, " ");
+	utilities::split(tokens, line, " ");
 	searchBounds.push_back(std::stod(tokens[0])); // b_min
 	searchBounds.push_back(std::stod(tokens[1])); // b_max
 	tokens.clear();
 
 	// first third
 	std::getline(fin, line);
-	split(tokens, line, " ");
+	utilities::split(tokens, line, " ");
 	searchBounds.push_back(std::stod(tokens[0])); // lambda_min
 	searchBounds.push_back(std::stod(tokens[1])); // lambda_max
 	tokens.clear();
@@ -85,7 +66,7 @@ void PraatFileIO::analyze_config_file(ApproximationSystem &system)
 
 	// fifth line
 	std::getline(fin, line);
-	split(tokens, line, " ");
+	utilities::split(tokens, line, " ");
 	for (unsigned int n=0; n<modelOrder; ++n)
 		abbreviatives.push_back(std::stod(tokens[n]));
 	tokens.clear();
@@ -100,7 +81,7 @@ void PraatFileIO::analyze_config_file(ApproximationSystem &system)
 
 }
 
-void PraatFileIO::analyze_data_file(ApproximationSystem &system)
+void PraatFileIO::analyze_data_file(SystemTA &system)
 {
 	// create a file-reading object
 	std::ifstream fin;
@@ -123,7 +104,7 @@ void PraatFileIO::analyze_data_file(ApproximationSystem &system)
 
 	// 7th line
 	std::getline(fin, line);
-	split(tokens, line, " ");
+	utilities::split(tokens, line, " ");
 	numberSamples = std::stod(tokens[0]);
 	tokens.clear();
 
@@ -133,7 +114,7 @@ void PraatFileIO::analyze_data_file(ApproximationSystem &system)
 		std::getline(fin, line);
 		std::size_t pos = line.find_first_of('\t');
 		line.erase(line.begin(),line.begin()+pos+1);
-		split(tokens, line, "\t");
+		utilities::split(tokens, line, "\t");
 		samplePoints.push_back(std::stod(tokens[0]));
 		originalF0.push_back(std::stod(tokens[1]));
 		tokens.clear();
@@ -152,7 +133,7 @@ void PraatFileIO::analyze_data_file(ApproximationSystem &system)
 
 }
 
-void PraatFileIO::generate_output_file(ApproximationSystem &system)
+void PraatFileIO::generate_output_file(SystemTA &system)
 {
 	// create output file and write results to it
 	std::ofstream fout;

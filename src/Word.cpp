@@ -5,7 +5,7 @@
  *      Author: patrick
  */
 
-#include "StringOps.h"
+#include "utilities.h"
 #include "Word.h"
 #include "Exception.h"
 #include <algorithm>
@@ -21,7 +21,7 @@ Word::Word(std::string input, std::string accentPattern)
 
 void Word::determine_accent_pattern(std::string accentPattern)
 {
-	for (uint8_t i=0; i<accentPattern.size(); ++i)
+	for (uint16_t i=0; i<accentPattern.size(); ++i)
 	{
 		m_accentPattern.push_back(accentPattern[i] - '0'); // char to int
 	}
@@ -32,18 +32,18 @@ void Word::determine_accent_pattern(std::string accentPattern)
 void Word::determine_syllable_vec()
 {
 	// split words by vertical line
-	uint8_t cntWord (0); uint8_t cntSylAbs (0);
+	uint16_t cntWord (0); uint16_t cntSylAbs (0);
 	std::vector<std::string> word_str;
-	split(word_str, m_string, "|");
+	utilities::split(word_str, m_string, "|");
 
 	for (auto w = word_str.begin(); w != word_str.end(); ++w)
 	{
 		cntWord++;
 
 		// split syllables by dot
-		uint8_t cntSylRel = 0;
+		uint16_t cntSylRel = 0;
 		std::vector<std::string> syllable_str;
-		split(syllable_str,*w,".");
+		utilities::split(syllable_str,*w,".");
 
 		// create Syllable objects
 		for (auto s = syllable_str.begin(); s != syllable_str.end(); ++s)
@@ -65,7 +65,7 @@ void Word::determine_syllable_vec()
 			m_syllable_vec[0].determine_position_features(word_str.size(),cntWord,syllable_str.size(),1,0,m_syllable_vec[1].get_number_phonemes());
 
 			// following syllables
-			for (uint8_t i=1; i<m_numberSyllables-1; ++i)
+			for (uint16_t i=1; i<m_numberSyllables-1; ++i)
 			{
 				m_syllable_vec[i].determine_accent_features(m_accentPattern[i-1], m_accentPattern[i], m_accentPattern[i+1]);
 				m_syllable_vec[i].determine_position_features(word_str.size(),cntWord,syllable_str.size(),i+1,m_syllable_vec[i-1].get_number_phonemes(),m_syllable_vec[i+1].get_number_phonemes());

@@ -1,5 +1,5 @@
-#ifndef FILEANALYZER_H_
-#define FILEANALYZER_H_
+#ifndef TRAINIGFILEGENERATOR_H_
+#define TRAINIGFILEGENERATOR_H_
 
 #include <iostream>
 #include <fstream>
@@ -7,16 +7,12 @@
 #include <vector>
 #include <map>
 
-class FileAnalyzer {
+class TrainingFileGenerator {
 public:
-	FileAnalyzer(std::string featureFile, std::string targetFile, std::string trainingFile);
+	TrainingFileGenerator(std::string featureFile, std::string targetFile, std::string trainingFile);
 	void print_statistics();
 
 private:
-	// statistics
-	static double mean (std::vector<double> &data);
-	static double variance (std::vector<double> &data);
-
 	// analysis
 	void read_input_files();
 	void write_to_output_file();
@@ -40,4 +36,4 @@ private:
 
 };
 
-#endif /* FILEANALYZER_H_ */
+#endif /* TRAINIGFILEGENERATOR_H_ */

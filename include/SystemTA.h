@@ -1,18 +1,18 @@
 /*
- * ApproximationSystem.h
+ * SystemTA.h
  *
  *  Created on: 24 May 2017
  *      Author: patrick
  */
 
-#ifndef APPROXIMATIONSYSTEM_H_
-#define APPROXIMATIONSYSTEM_H_
+#ifndef SYSTEMTA_H_
+#define SYSTEMTA_H_
 
 #include <vector>
+#include <types.h>
 
-class ApproximationSystem {
+class SystemTA {
 public:
-
 	// get functions
 	unsigned int 		get_model_order() 			{ return m_modelOrder; };
 	unsigned int 		get_number_samples() 		{ return m_numberSamples; };
@@ -40,21 +40,14 @@ public:
 	// inform system about optimum -> calculates m_finalAbbrev, m_sythesizedF0
 	void set_optimum (std::vector<double> optVariables);
 
-
 private:
-	// helpers for intermediate calculations
-	static double 				binomial_coefficient	(int n, int k);
-	static double 				factorial				(int n)	{ return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;	};
-	static double				root_mean_square_error	(std::vector<double> originalF0, std::vector<double> synthesizedF0);
-	static double				correlation_coefficient	(std::vector<double> originalF0, std::vector<double> synthesizedF0);
-	static std::vector<double>	system_answer 			(std::vector<double> variables, ApproximationSystem *system);
+	// static functions called by error function
+	static std::vector<double>	system_answer 			(std::vector<double> variables, SystemTA *system);
 	static std::vector<double> 	system_coefficients		(unsigned int modelOrder, std::vector<double> initialAbbrev, std::vector<double> variables);
-	static std::vector<double>  differentiation 		(std::vector<double> function, double stepSize);
 
 	// calculate system state at optimum
 	void system_answer_opt 		();			// set synthezized F0
 	void system_derivatives_opt	();			// set final derivatives
-	void system_derivatives_opt_num	();			// set final derivatives using numerical differentiation
 
 	// members (set by PraatFileIO)
 	unsigned int 		m_modelOrder;		// model order M
@@ -72,4 +65,4 @@ private:
 	double m_rho;							// correleation coefficient
 };
 
-#endif /* APPROXIMATIONSYSTEM_H_ */
+#endif /* SYSTEMTA_H_ */

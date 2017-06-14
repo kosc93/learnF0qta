@@ -8,86 +8,12 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "ApproximationSystem.h"
 
-// calculate binomial coefficient C(n, k)
-double ApproximationSystem::binomial_coefficient(int n, int k)
-{
-    double result = 1;
-
-    if ( k > n - k )
-        k = n - k;
-
-    for (int i = 0; i < k; ++i)
-    {
-    	result *= (n - i);
-    	result /= (i + 1);
-    }
-
-    return result;
-}
-
-// calculate root mean square error between two vectors
-double ApproximationSystem::root_mean_square_error	(std::vector<double> originalF0, std::vector<double> synthesizedF0)
-{
-	double result = 0.0;
-	unsigned int numberSamples = originalF0.size();
-
-	for (unsigned int i=0; i<numberSamples; ++i)
-	{
-		result += (std::pow(synthesizedF0[i] - originalF0[i],2));
-	}
-
-	result = std::sqrt(result/(double)numberSamples);
-	return result;
-}
-
-// calculate correlation coefficient between two vectors
-double ApproximationSystem::correlation_coefficient	(std::vector<double> originalF0, std::vector<double> synthesizedF0)
-{
-	double result = 0.0;
-	unsigned int numberSamples = originalF0.size();
-
-	// get means
-	double originalF0Mean = 0.0, sythezisedF0Mean = 0.0;
-	for (unsigned int i=0; i<numberSamples; ++i)
-	{
-		originalF0Mean += originalF0[i];
-		sythezisedF0Mean += synthesizedF0[i];
-	}
-	originalF0Mean /= numberSamples;
-	sythezisedF0Mean /= numberSamples;
-
-	// get variance
-	double originalF0Var = 0.0, sythezisedF0Var = 0.0;
-	for (unsigned int i=0; i<numberSamples; ++i)
-	{
-		originalF0Var += std::pow((originalF0[i] - originalF0Mean),2);
-		sythezisedF0Var += std::pow((synthesizedF0[i] - sythezisedF0Mean),2);
-	}
-
-	// calculate correlation coefficient
-	for (unsigned int i=0; i<numberSamples; ++i)
-	{
-		result += ((originalF0[i] - originalF0Mean)*(synthesizedF0[i] - sythezisedF0Mean));
-	}
-
-	return result/(std::sqrt(originalF0Var*sythezisedF0Var));
-}
-
-std::vector<double>  ApproximationSystem::differentiation (std::vector<double> function, double stepSize)
-{
-	std::vector<double> abbreveation;
-	for (unsigned int i = 1; i < function.size(); ++i)
-	{
-		abbreveation.push_back((function[i] - function[i-1])/stepSize);
-	}
-
-	return abbreveation;
-}
+#include "SystemTA.h"
+#include "utilities.h"
 
 // calculate system coefficients
-std::vector<double> ApproximationSystem::system_coefficients(unsigned int modelOrder, std::vector<double> initialAbbrev, std::vector<double> variables)
+std::vector<double> SystemTA::system_coefficients(unsigned int modelOrder, std::vector<double> initialAbbrev, std::vector<double> variables)
 {
 	// variables
 	const double& slope = variables[0];
@@ -103,7 +29,7 @@ std::vector<double> ApproximationSystem::system_coefficients(unsigned int modelO
 		double tmp = 0.0;
 		for (unsigned int j=0; j<=n-1; ++j)
 		{
-			tmp += ( result[j]*std::pow((-1)*strength,n-j) * binomial_coefficient(n,j) * factorial(j) );
+			tmp += ( result[j]*std::pow((-1)*strength,n-j) * utilities::binomial_coefficient(n,j) * utilities::factorial(j) );
 		}
 
 		if (n == 1)
@@ -111,14 +37,14 @@ std::vector<double> ApproximationSystem::system_coefficients(unsigned int modelO
 			tmp += slope;	// minus changes in following term!
 		}
 
-		result[n] = (initialAbbrev[n] - tmp)/factorial(n);
+		result[n] = (initialAbbrev[n] - tmp)/utilities::factorial(n);
 	}
 
 	return result;
 }
 
 // calculate system answer of Nth order system at time t with coefficients c parameters x
-std::vector<double> ApproximationSystem::system_answer (std::vector<double> variables, ApproximationSystem *system)
+std::vector<double> SystemTA::system_answer (std::vector<double> variables, SystemTA *system)
 {
 	// get parameters
 	unsigned int 		modelOrder 		= system->get_model_order();
@@ -156,13 +82,13 @@ std::vector<double> ApproximationSystem::system_answer (std::vector<double> vari
 }
 
 // calculate SSE error function depending on parameters (M,N,Fn,ti,F0i) and variables (m,b,lambda)
-double ApproximationSystem::error_function(const std::vector<double> &variables, std::vector<double> &grad, void* f_data)
+double SystemTA::error_function(const std::vector<double> &variables, std::vector<double> &grad, void* f_data)
 {
 	// output
 	double result = 0.0;
 
 	// get parameters
-	ApproximationSystem *system = (ApproximationSystem*) f_data;
+	SystemTA *system = (SystemTA*) f_data;
 
 	// get system answer and original
 	std::vector<double> synthesizedF0 = system_answer(variables, system);
@@ -177,7 +103,7 @@ double ApproximationSystem::error_function(const std::vector<double> &variables,
 }
 
 // set optimal variables to system and calculate final state and resulting F0 approximation
-void ApproximationSystem::set_optimum (std::vector<double> optVariables)
+void SystemTA::set_optimum (std::vector<double> optVariables)
 {
 	// optimal values m,b,lambda
 	m_optVariables = optVariables;
@@ -190,14 +116,14 @@ void ApproximationSystem::set_optimum (std::vector<double> optVariables)
 	system_derivatives_opt();
 
 	// root mean square error
-	m_rmse = root_mean_square_error(m_originalF0, m_sythesizedF0);
+	m_rmse = utilities::rmse(m_originalF0, m_sythesizedF0);
 
 	//correlation coefficient
-	m_rho = correlation_coefficient(m_originalF0, m_sythesizedF0);
+	m_rho = utilities::correlation(m_originalF0, m_sythesizedF0);
 }
 
 // calculate derivative of system at end state (last sample point)
-void ApproximationSystem::system_derivatives_opt()
+void SystemTA::system_derivatives_opt()
 {
 	// sample time
 	double sampleTime = m_samplePoints[m_numberSamples-1]-m_samplePoints[0];
@@ -219,7 +145,7 @@ void ApproximationSystem::system_derivatives_opt()
 			double q = 0.0;
 			for (unsigned int k=0; k<=std::min(m_modelOrder-1,n); ++k)
 			{
-				q += (std::pow((-1)*m_optVariables[2], n-k) * binomial_coefficient(n,k) * coefficients[j+k]) * factorial(k+j)/factorial(j);
+				q += (std::pow((-1)*m_optVariables[2], n-k) * utilities::binomial_coefficient(n,k) * coefficients[j+k]) * utilities::factorial(k+j)/utilities::factorial(j);
 			}
 
 			tmp += (std::pow(sampleTime, j) * q);
@@ -237,28 +163,8 @@ void ApproximationSystem::system_derivatives_opt()
 	m_finalAbbrev = result;
 }
 
-// calculate derivative of system at end state (last sample point) with numeric differentiation
-void ApproximationSystem::system_derivatives_opt_num()
-{
-	// sample time
-	double sampleTime = m_samplePoints[1]-m_samplePoints[0];
-
-	// output
-	std::vector<double> result (m_modelOrder, 0.0);
-
-	std::vector<double> abbreveative = m_sythesizedF0;
-	result[0] = m_sythesizedF0[m_numberSamples-1];
-	for (unsigned int i = 1; i<m_modelOrder; ++i)
-	{
-		abbreveative = differentiation(abbreveative, sampleTime);
-		result[i] = abbreveative[abbreveative.size()-1];
-	}
-
-	m_finalAbbrev = result;
-}
-
 // calculate system answer for optimal parameters
-void ApproximationSystem::system_answer_opt()
+void SystemTA::system_answer_opt()
 {
 		// output
 	std::vector<double> result (m_numberSamples, 0.0);

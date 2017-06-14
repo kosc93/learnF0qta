@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <exception>
 
-#include "ApproximationSystem.h"
+#include "SystemTA.h"
 #include "PraatFileIO.h"
 
 int main(int argc, char* argv[])
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
 	/********** Setup Parameter Search **********/
 	// create class objects
-	ApproximationSystem system;
+	SystemTA system;
 
 	// file: read from input files and initialize system; TBD: include file path
 	PraatFileIO praatFiles (system, path);
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 
 	// global optimizer
 	nlopt::opt globalOpt(nlopt::GN_ORIG_DIRECT_L, 3);
-	globalOpt.set_min_objective(system.error_function, (ApproximationSystem*) &system);
+	globalOpt.set_min_objective(system.error_function, (SystemTA*) &system);
 	globalOpt.set_xtol_rel(1e-4);
 	globalOpt.set_lower_bounds(lowerBounds);
 	globalOpt.set_upper_bounds(upperBounds);
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
 	// local optimizer
 	nlopt::opt localOpt(nlopt::LN_BOBYQA, 3);  // LN_NELDERMEAD
-	localOpt.set_min_objective(system.error_function, (ApproximationSystem*) &system);
+	localOpt.set_min_objective(system.error_function, (SystemTA*) &system);
 	localOpt.set_xtol_rel(1e-4);
 	localOpt.set_lower_bounds(lowerBounds);
 	localOpt.set_upper_bounds(upperBounds);

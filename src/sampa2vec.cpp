@@ -7,7 +7,7 @@
 
 #include "Word.h"
 #include "Exception.h"
-#include "StringOps.h"
+#include "utilities.h"
 #include <exception>
 #include <iostream>
 #include <fstream>
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     		while (std::getline(fin, line))
     		{
     			++cnt;
-    			split(tokens, line, ",");
+    			utilities::split(tokens, line, ",");
     			Word word (tokens[1], tokens[2]);
     			fout << tokens[0] << "," << word.get_output_string() << std::endl;
     			// std::cout << "(" << cnt << ") processed: " << tokens[0] << " [" << tokens[1] << "]" << std::endl;

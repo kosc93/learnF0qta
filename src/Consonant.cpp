@@ -54,7 +54,7 @@ void Consonant::determine_features()
 	}
 }
 
-const std::map<std::string, consonant_feature_vec> Consonant::CONSONANTS{
+const std::map<std::string, consonantFeatures_t> Consonant::CONSONANTS{
 		{""	  , {0, 0, 0, 0, 0, 0, 0} },
 		{"p"  , {0, 0, 1, 0, 0, 0, 0} },
 		{"b"  , {1, 0, 1, 0, 0, 0, 0} },

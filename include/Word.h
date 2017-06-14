@@ -8,7 +8,7 @@
 #ifndef WORD_H_
 #define WORD_H_
 
-#include "Types.h"
+#include "types.h"
 #include "Syllable.h"
 #include <vector>
 #include <string>
@@ -30,7 +30,7 @@ private:
 	unsigned int m_numberSyllables = 0;
 	std::string m_string;
 	std::vector<Syllable> m_syllable_vec;
-	std::vector<uint8_t> m_accentPattern;
+	std::vector<int16_t> m_accentPattern;
 
 };
 
