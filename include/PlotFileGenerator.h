@@ -8,11 +8,10 @@
 
 class PlotFileGenerator {
 public:
-	PlotFileGenerator (std::string targetLine, std::string path);
+	PlotFileGenerator (std::string targetLine, std::string path, double shift);
 
 private:
 	// member functions
-	void read_data_file ();
 	void analyze_syllable_bounds ();
 	void analyze_target_line ();
 	void generate_plot_file ();
@@ -22,7 +21,7 @@ private:
 	std::string m_path;
 	std::vector<double> m_targetLineValues;
 	std::string m_name;
-	double m_timeOffset;			// set by read_data_file()
+	double m_shift;
 	double m_initialF0;
 	std::vector<double> m_slope;
 	std::vector<double> m_offset;

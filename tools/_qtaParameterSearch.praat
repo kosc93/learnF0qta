@@ -13,6 +13,7 @@ form qtaParameterSearch
 		real right_Target_height_range_(st) 120
 		real left_Strength_range 1
 		real right_Strength_range 80
+		real syllable_shift 0
 		integer model_order 5
 		integer algorithm 34
 		integer random_iterations 5
@@ -29,6 +30,7 @@ b_min = left_Target_height_range
 b_max = right_Target_height_range
 l_min = left_Strength_range
 l_max = right_Strength_range
+shift = syllable_shift
 n = model_order
 cnt = 0
 pulse = 0
@@ -163,17 +165,34 @@ procedure qtaAnalysis
 	for nm from 1 to nintervals
 		select TextGrid 'name$'
 		label$ = Get label of interval... 1 nm
-		start = Get starting point... 1 nm
-		end = Get end point... 1 nm
+		
+		##### consider syllable shift
+		tmpS = Get starting point... 1 nm
+		if tmpS = wordStart
+			start = tmpS
+		else
+			start = tmpS - shift/1000
+		endif
+
+		tmpE = Get end point... 1 nm
+		if tmpE = wordEnd
+			end = tmpE
+		else
+			end = tmpE - shift/1000
+		endif
+
 		interval_dur = end - start
 
 		if not label$ = ""
 			interval_t = interval_t + 1
-			end_last = end
 
 			select PitchTier semitonef0
 			index_first = Get high index from time... start
 			index_last = Get low index from time... end
+			# syllable shift can lead to problems if there is no F0 in interval
+			if index_last = 0
+				index_last = 1
+			endif
 			tInitial = Get time from index... index_first
 			xInitial = Get value at index... index_first
 			tFinal = end
@@ -364,9 +383,9 @@ procedure qtaAnalysis
 		endif
 	endfor
 
-	#filedelete 'directory$'config
-	#filedelete 'directory$'data
-	#filedelete 'directory$'output
+	filedelete 'directory$'config
+	filedelete 'directory$'data
+	filedelete 'directory$'output
 	filedelete 'directory$'dataoutput
 
 	##### last row is empty

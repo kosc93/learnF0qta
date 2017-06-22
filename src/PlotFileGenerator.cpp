@@ -4,10 +4,11 @@
 #include <sys/stat.h>
 #include "utilities.h"
 
-PlotFileGenerator::PlotFileGenerator (std::string targetLine, std::string path)
+PlotFileGenerator::PlotFileGenerator (std::string targetLine, std::string path, double shift)
 {
 	// get input information
 	m_path = path;
+	m_shift = shift;
 	std::vector<std::string> tokens;
 	utilities::split(tokens, targetLine, ",");
 	m_name = tokens[0];
@@ -18,31 +19,10 @@ PlotFileGenerator::PlotFileGenerator (std::string targetLine, std::string path)
 	}
 
 	// compute input information
-	read_data_file();
 	analyze_target_line();
 	analyze_syllable_bounds();
 	generate_plot_file();
 	call_gnuplot();
-}
-
-void PlotFileGenerator::read_data_file()
-{
-	// create a file-reading object for data file (semitone f0)
-	std::string fileName = m_path + m_name + ".semitonef0";
-	std::ifstream finF0;
-	finF0.open(fileName); // open input file
-	if (!finF0.good())
-		throw Exception("ERROR: semitonef0 file not found! " + fileName);
-
-	// read from file
-	std::string line;
-	std::vector<std::string> tokens;
-	std::getline(finF0, line); // ingnore first line (header)
-	std::getline(finF0, line); // read second line
-	utilities::split(tokens, line, "\t");
-
-	// get relevant data
-	m_timeOffset = std::stod(tokens[1]);	// contains first sample time point
 }
 
 void PlotFileGenerator::analyze_target_line()
@@ -98,7 +78,7 @@ void PlotFileGenerator::analyze_syllable_bounds()
 	m_bounds.push_back(std::stod(tokens[1]));
 
 	// get further syllable bounds
-	for (int i=1; i<numberIntervals-1; ++i)
+	for (int i=1; i<numberIntervals-2; ++i)
 	{
 		std::getline(finF0, line); // ingnore line "intervals [1]:"
 		std::getline(finF0, line); // ingnore line "xmin = 0 "
@@ -106,11 +86,17 @@ void PlotFileGenerator::analyze_syllable_bounds()
 		std::getline(finF0, line);
 		tokens.clear();
 		utilities::split(tokens, line, " = ");
-		m_bounds.push_back(std::stod(tokens[1]));
+		m_bounds.push_back(std::stod(tokens[1])-(m_shift/1000));
 	}
 
-	// get relevant data
-	m_timeOffset = std::stod(tokens[1]);	// contains first sample time point
+	// get last syllable bounds
+	std::getline(finF0, line); // ingnore line "intervals [1]:"
+	std::getline(finF0, line); // ingnore line "xmin = 0 "
+	std::getline(finF0, line);
+	std::getline(finF0, line);
+	tokens.clear();
+	utilities::split(tokens, line, " = ");
+	m_bounds.push_back(std::stod(tokens[1]));
 }
 
 void PlotFileGenerator::generate_plot_file()

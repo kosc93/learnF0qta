@@ -126,5 +126,11 @@ double utilities::correlation (const std::vector<double> &x, const std::vector<d
 		result += ((x[i] - xMean)*(y[i] - yMean));
 	}
 
-	return result/(std::sqrt(xVar*yVar));
+	result /= (std::sqrt(xVar*yVar));
+	if (std::isnan(result))
+	{
+		return 0.0;
+	}
+
+	return result;
 }

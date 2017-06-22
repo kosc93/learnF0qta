@@ -34,10 +34,10 @@ then
 	cp bin/findqta $path
 
 	printf ">>> [praat] process annotated audio files ... \n" | tee -a $output
-	tools/praat --run $path/_qtaParameterSearch.praat \"Compute qTA parameters\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $N $algo $iter
+	tools/praat --run $path/_qtaParameterSearch.praat \"Compute qTA parameters\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $sshift $N $algo $iter
 
 	printf "\n>>> [praat] calculate ensemble file ... \n" | tee -a $output
-	tools/praat --run $path/_qtaParameterSearch.praat \"Assemble ensemble file\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $N $algo $iter
+	tools/praat --run $path/_qtaParameterSearch.praat \"Assemble ensemble file\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $sshift $N $algo $iter
 
 	printf "\n>>> [iconv] convert encoding of target ensemble file ... \n" | tee -a $output
 	if [ "$(uchardet $path/targets.txt)" = "UTF-16" ]
@@ -58,7 +58,7 @@ then
 			rm tmp.TextGrid
 		fi
 	done
-	bin/plotqta $path/../TARGETS.csv $path/
+	bin/plotqta $path/../TARGETS.csv $path/ $sshift
 
 	rm $path/_qtaParameterSearch.praat
 	rm $path/findqta

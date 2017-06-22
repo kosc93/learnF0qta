@@ -2,7 +2,7 @@
 	<path>test/corpus</path>
 	<praat>
 		<systemorder>5</systemorder>
-		<syllableshift>0</syllableshift>
+		<syllableshift>50</syllableshift>
 		<slopemin>-10</slopemin>
 		<slopemax>10</slopemax>
 		<offsetmin>70</offsetmin>

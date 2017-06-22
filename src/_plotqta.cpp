@@ -13,9 +13,9 @@
 int main(int argc, char* argv[])
 {
 	// Check the number of parameters
-	if (argc != 3)
+	if (argc != 4)
 	{
-		std::cerr << "Usage: " << std::string(argv[0]) << " <TARGET-FILE> <PATH>" << std::endl;
+		std::cerr << "Usage: " << std::string(argv[0]) << " <TARGET-FILE> <PATH> <SYLLABLE-SHIFT>" << std::endl;
 		return 1;
 	}
 
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 	{
 		try
 		{
-			PlotFileGenerator(line, std::string(argv[2]));
+			PlotFileGenerator(line, std::string(argv[2]), std::stod(argv[3]));
 			++cnt;
 			std::cout <<"\r\tnumber of generated plots: " << cnt;
 		}
