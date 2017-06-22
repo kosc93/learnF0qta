@@ -41,3 +41,4 @@ test/FEATURES.csv
 test/TARGETS.csv
 test/TRAINING.csv
 test/plots/*
+test/resynthesis/*
