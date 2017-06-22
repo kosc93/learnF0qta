@@ -1,7 +1,7 @@
 ## Description
 learnF0qta is a software tool for learning qTA parameters of a speech-corpus for F0 prediction utilizing PENTAtrainer1. The main part of the software is a shell script calling different C++ programs and managing the file input and output. A modified version of [PENTAtrainer1](http://www.homepages.ucl.ac.uk/~uclyyix/PENTAtrainer1/) is used for extracting optimal qTA targets for F0-resythesis. Based on this data and the SAMPA transcription, a training file is generated which is used for the training of different machine learning methods. Additional features like generating plots and some statistics are also implemented. The whole software works full automatically without any user interaction or GUI.
 
-![overview](https://user-images.githubusercontent.com/18279731/27442818-91b91188-5771-11e7-823c-58a22d07d2fa.png | width=70)
+<img src="https://user-images.githubusercontent.com/18279731/27442818-91b91188-5771-11e7-823c-58a22d07d2fa.png" alt="overview" width="350">
 
 ## Requirements
 The software is developed on a 64-bit Linux system with Ubuntu 16.04 LTS. The `g++` compiler with `c++11` support is required. Only the Praat binary is delivered, the other code is build natively by the installation script.
