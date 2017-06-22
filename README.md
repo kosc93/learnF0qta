@@ -8,16 +8,12 @@ The software is developed on a 64-bit Linux system with Ubuntu 16.04 LTS. The `g
 Most tools (Praat, PENTAtrainer, NLopt, LIBSVM, etc.) are delivered with the source code and are compiled and installed in the local directory. Additionally, some other software is neccessary in order to run the code which is listed below. 
 
 `gnuplot`: Is used for generating plots from different data.
-```
-sudo apt-get install gnuplot
-```
+
 `xmlstarlet`: Is a small command line tool for analyzing xml files which is used for configuration files.
-```
-sudo apt-get install xmlstarlet
-```
+
 `uchardet`: This tools is used for determining encoding of text files. Praat returns UTF-16 encoding if it processes *Umlaute (ä,ö,ü)*.
 ```
-sudo apt-get install xmlstarlet
+sudo apt-get install gnuplot xmlstarlet uchardet
 ```
 Additionally, the following command line tools which are pre-installed on every Ubuntu system are usedin the shell script.
 
