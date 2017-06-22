@@ -77,4 +77,4 @@ All the calculated results are found in the parent directory of the defined path
 ![qTA resynthesis](https://user-images.githubusercontent.com/18279731/27442827-99598742-5771-11e7-8a43-b89ec0b87b83.png?raw=true)
  
 ## Miscellaneous
-If there are words with 'Umlaut' (ä,ö,ü), the target file returned from the Praat script will be encoded with UTF-16. Otherwise the encoding is UTF-8. `learnF0qta` uses the command line tool `iconv` for encoding conversion. The user should check the correct encoding for the used system. 
+ 
