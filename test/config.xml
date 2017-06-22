@@ -2,13 +2,13 @@
 	<path>test/corpus</path>
 	<praat>
 		<systemorder>5</systemorder>
-		<syllableshift>30</syllableshift>
-		<slopemin>-110</slopemin>
-		<slopemax>110</slopemax>
-		<offsetmin>-60</offsetmin>
-		<offsetmax>60</offsetmax>
+		<syllableshift>0</syllableshift>
+		<slopemin>-10</slopemin>
+		<slopemax>10</slopemax>
+		<offsetmin>70</offsetmin>
+		<offsetmax>120</offsetmax>
 		<strengthmin>1</strengthmin>
-		<strengthmax>300</strengthmax>
+		<strengthmax>80</strengthmax>
 	</praat>
 	<optimization>
 		<randominit>5</randominit>

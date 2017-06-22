@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <map>
 
 const uint16_t NUM_VOWEL_FEATURES 	= 5;
 const uint16_t NUM_CONSONANT_FEATURES= 7;
@@ -34,8 +35,8 @@ typedef std::array<feature_t,NUM_POSITION_FEATURES> 	positionFeatures_t;
 typedef std::array<feature_t,NUM_ACCENT_FEATURES> 		accentFeatures_t;
 typedef std::array<feature_t,NUM_SYLLABLE_FEATURES> 	syllableFeatures_t;
 
-typedef std::vector<double> signal_t;
-typedef std::vector<double> doubleVec_t;
 typedef std::vector<std::string> stringVec_t;
+
+typedef std::map<double,double> signal_t;
 
 #endif /* TYPES_H_ */

@@ -19,7 +19,6 @@ PraatFileIO::PraatFileIO(SystemTA &system, std::string &path)
 	m_path = path;
 	analyze_config_file(system);
 	analyze_data_file(system);
-
 }
 
 void PraatFileIO::analyze_config_file(SystemTA &system)
@@ -53,7 +52,7 @@ void PraatFileIO::analyze_config_file(SystemTA &system)
 	searchBounds.push_back(std::stod(tokens[1])); // b_max
 	tokens.clear();
 
-	// first third
+	// third third
 	std::getline(fin, line);
 	utilities::split(tokens, line, " ");
 	searchBounds.push_back(std::stod(tokens[0])); // lambda_min
@@ -73,12 +72,13 @@ void PraatFileIO::analyze_config_file(SystemTA &system)
 
 	// sixth line
 	std::getline(fin, line);
+	utilities::split(tokens, line, " ");
 
 	// initialize system
 	system.set_model_order(modelOrder);
 	system.set_search_bounds(searchBounds);
 	system.set_initial_abbreviatives(abbreviatives);
-
+	system.set_syllable_bounds(std::stod(tokens[0]), std::stod(tokens[1]));
 }
 
 void PraatFileIO::analyze_data_file(SystemTA &system)
@@ -130,7 +130,6 @@ void PraatFileIO::analyze_data_file(SystemTA &system)
 	system.set_number_samples(numberSamples);
 	system.set_sample_points(samplePoints);
 	system.set_original_F0(originalF0);
-
 }
 
 void PraatFileIO::generate_output_file(SystemTA &system)
@@ -163,5 +162,25 @@ void PraatFileIO::generate_output_file(SystemTA &system)
 
 	// close output file
 	fout.close();
+
+	/****************************************/
+
+	// create additional output file for equally sampled F0
+	std::ofstream fout2;
+	fout2.open (m_path+"dataoutput");
+	fout2 << std::fixed << std::setprecision(6);
+
+	// line 1: number of samples
+	unsigned numberSamples = system.get_sample_points_equal().size();
+	fout2 << numberSamples << std::endl;
+
+	// from line 2: sample points and resynthesized F0 (equally sampled)
+	for (unsigned int i=0; i<numberSamples; ++i)
+	{
+		fout2 << system.get_sample_points_equal()[i] << " " << system.get_sythesized_F0_sampled()[i] << std::endl;
+	}
+
+	// close output file
+	fout2.close();
 }
 

@@ -5,8 +5,8 @@
  *      Author: Patrick Schmager
  */
 
-#include "Consonant.h"
 #include "Exception.h"
+#include "Consonant.h"
 
 Consonant::Consonant(std::string input)
 {

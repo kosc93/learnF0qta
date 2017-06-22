@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 	}
 	catch(std::runtime_error &exception)
 	{
-		std::cerr << "ERROR: " << exception.what() << std::endl;;
+		//std::cerr << "ERROR: " << exception.what() << std::endl;;
 	}
 
 	/********** Compute Results **********/

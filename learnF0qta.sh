@@ -30,22 +30,37 @@ then
 	printf '\trandom-iter\t %s \n\n' "$iter" | tee -a $output
 
 	##### get targets and generate plots #####
-	cp tools/_PENTAtrainer1N.praat $path
+	cp tools/_qtaParameterSearch.praat $path
 	cp bin/findqta $path
 
 	printf ">>> [praat] process annotated audio files ... \n" | tee -a $output
-	tools/praat --run $path/_PENTAtrainer1N.praat 1 \"label\" \"Process all sounds without pause\" 100 600 10 100 0 -0.03 0.07 \"yes\" $mmin $mmax $bmin $bmax $lmin $lmax 150 $N \"no\" \"qTA_synthesis\" \"sil\" \"yes\" \"no\" no $sshift $algo $iter
+	tools/praat --run $path/_qtaParameterSearch.praat \"Compute qTA parameters\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $N $algo $iter
 
-	printf "\n\n>>> [praat] generate ensemble files ... \n" | tee -a $output
-	tools/praat --run $path/_PENTAtrainer1N.praat 1 \"label\" \"Get emsemble files\" 100 600 10 100 0 -0.03 0.07 \"yes\" $mmin $mmax $bmin $bmax $lmin $lmax 150 $N \"no\" \"qTA_synthesis\" \"sil\" \"yes\" \"no\" no $sshift $algo $iter | tee -a $output
+	printf "\n>>> [praat] calculate ensemble file ... \n" | tee -a $output
+	tools/praat --run $path/_qtaParameterSearch.praat \"Assemble ensemble file\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $N $algo $iter
 
 	printf "\n>>> [iconv] convert encoding of target ensemble file ... \n" | tee -a $output
-	iconv -f UTF-16 -t UTF-8 $path/targets.txt > $path/../TARGETS.csv | tee -a $output
+	if [ "$(uchardet $path/targets.txt)" = "UTF-16" ]
+	then
+		iconv -f UTF-16 -t UTF-8 $path/targets.txt > tmp.csv
+		cat tmp.csv > $path/../TARGETS.csv
+		rm tmp.csv
+	else
+		cp $path/targets.txt $path/../TARGETS.csv
+	fi
 
 	printf "\n>>> [plotqta] generating plots ... \n" | tee -a $output
+	for i in $path/*.TextGrid; do
+    	if [ "$(uchardet $i)" = "UTF-16" ]
+		then
+			iconv -f UTF-16 -t UTF-8 $i > tmp.TextGrid
+			cat tmp.TextGrid > $i
+			rm tmp.TextGrid
+		fi
+	done
 	bin/plotqta $path/../TARGETS.csv $path/
 
-	rm $path/_PENTAtrainer1N.praat
+	rm $path/_qtaParameterSearch.praat
 	rm $path/findqta
 
 	##### create training data #####
@@ -56,8 +71,7 @@ then
 	bin/linkqta $path/../FEATURES.csv $path/../TARGETS.csv $path/../TRAINING.csv | tee -a $output
 
 	##### remove unneccessary files #####
-	printf "\n>>> [rm] remove unneccessary files ... \n" | tee -a $output
-	rm $path/*.actutimenormf0; rm $path/*.f0; rm $path/*.f0velocity; rm $path/*.means; rm $path/*.normtimef0; rm $path/*.PitchTier; rm $path/*.PitchTier_semitone; rm $path/*.plot; rm $path/*.primitive_code; rm $path/*.qTAf0; rm $path/*.qTAvelocity; rm $path/*.rawf0; rm $path/*.samplef0; rm $path/*.semitonef0; rm $path/*.smoothf0; rm $path/*.target
+	rm $path/*.semitonef0; rm $path/*.qtaf0; rm $path/*.qtaf0sampled; rm $path/*.plot; rm $path/*.targets; rm $path/*.txt;
 
 	ELAPSED_TIME=$(($SECONDS - $START_TIME))
 	echo 

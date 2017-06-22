@@ -11,6 +11,7 @@
 
 #include "SystemTA.h"
 #include "utilities.h"
+#include <algorithm>
 
 // calculate system coefficients
 std::vector<double> SystemTA::system_coefficients(unsigned int modelOrder, std::vector<double> initialAbbrev, std::vector<double> variables)
@@ -55,11 +56,11 @@ std::vector<double> SystemTA::system_answer (std::vector<double> variables, Syst
 
 	// modify variables
 	const double slope = variables[0];
-	const double offset = originalF0[numberSamples-1] - variables[0] * (samplePoints[numberSamples-1] - samplePoints[0]) + variables[1];
+	const double offset = variables[1];
 	const double strength = variables[2];
 
 	// output
-	std::vector<double> result (numberSamples, 0.0);
+	std::vector<double> synthF0;
 
 	// calculate system coefficients
 	std::vector<double> coefficients = system_coefficients(modelOrder, initialAbbrev, {slope, offset, strength});
@@ -67,18 +68,21 @@ std::vector<double> SystemTA::system_answer (std::vector<double> variables, Syst
 	// calculate system answer for every sample point
 	for (unsigned int i=0; i<numberSamples; ++i)
 	{
+		double result = 0;
 		// note time shift
-		double sampleTime = samplePoints[i]-samplePoints[0];
+		double sampleTime = samplePoints[i]-system->get_lower_syllable_bound();
 		for (unsigned int n=0; n<modelOrder; ++n)
 		{
-			result[i] += (coefficients[n] * std::pow(sampleTime,n));
+			result += (coefficients[n] * std::pow(sampleTime,n));
 		}
 
-		result[i] *= std::exp((-1)*sampleTime*strength);
-		result[i] += (offset + slope*sampleTime);
+		result *= std::exp((-1)*sampleTime*strength);
+		result += (offset + slope*sampleTime);
+
+		synthF0.push_back(result);
 	}
 
-	return result;
+	return synthF0;
 }
 
 // calculate SSE error function depending on parameters (M,N,Fn,ti,F0i) and variables (m,b,lambda)
@@ -96,7 +100,9 @@ double SystemTA::error_function(const std::vector<double> &variables, std::vecto
 	// calculate error function (SSE criteria); consider time shift
 	for (unsigned int i=0; i<system->get_number_samples(); ++i)
 	{
-		result += std::pow(system->get_original_F0()[i] - synthesizedF0[i],2);
+		{
+			result += std::pow(system->get_original_F0()[i] - synthesizedF0[i],2);
+		}
 	}
 
 	return result;	// logarithmic error criteria, cross entropy?
@@ -107,10 +113,13 @@ void SystemTA::set_optimum (std::vector<double> optVariables)
 {
 	// optimal values m,b,lambda
 	m_optVariables = optVariables;
-	m_optVariables[1] = m_originalF0[m_numberSamples-1] - m_optVariables[0] * (m_samplePoints[m_numberSamples-1] - m_samplePoints[0]) + m_optVariables[1];
 
 	// synthesized F0 with optimal parameters
 	system_answer_opt();
+
+	// synthesized F0 with optimal parameters
+	// TODO: write clean code here!!! -> use function parameters, no members!!!
+	system_answer_opt_sampled();
 
 	// final state (derivatives); note time shift
 	system_derivatives_opt();
@@ -126,7 +135,7 @@ void SystemTA::set_optimum (std::vector<double> optVariables)
 void SystemTA::system_derivatives_opt()
 {
 	// sample time
-	double sampleTime = m_samplePoints[m_numberSamples-1]-m_samplePoints[0];
+	double sampleTime = m_upperSyllableBound-m_lowerSyllableBound;
 
 	// output
 	std::vector<double> result (m_modelOrder, 0.0);
@@ -176,7 +185,7 @@ void SystemTA::system_answer_opt()
 	for (unsigned int i=0; i<m_numberSamples; ++i)
 	{
 		// note time shift
-		double sampleTime = m_samplePoints[i]-m_samplePoints[0];
+		double sampleTime = m_samplePoints[i]-m_lowerSyllableBound;
 		for (unsigned int n=0; n<m_modelOrder; ++n)
 		{
 			result[i] += (coefficients[n] * std::pow(sampleTime,n));
@@ -189,4 +198,38 @@ void SystemTA::system_answer_opt()
 	m_sythesizedF0 = result;
 }
 
+// calculate system answer for optimal parameters equally sampled
+void SystemTA::system_answer_opt_sampled()
+{
+	// samplePoints
+	std::vector<double> samplePointsEqual;
+	double sampleRate = 100; //Hz
+	for (double i=m_lowerSyllableBound; i<m_upperSyllableBound; i+=(1/sampleRate))
+	{
+		samplePointsEqual.push_back(i);
+	}
+	unsigned int numberSamples = samplePointsEqual.size();
+	m_samplePointsEqual = samplePointsEqual;
 
+	// output
+	std::vector<double> result (numberSamples, 0.0);
+
+	// calculate system coefficients
+	std::vector<double> coefficients = system_coefficients(m_modelOrder, m_initialAbbrev, m_optVariables);
+
+	// calculate system answer for every sample point
+	for (unsigned int i=0; i<numberSamples; ++i)
+	{
+		// note time shift
+		double sampleTime = samplePointsEqual[i]-m_lowerSyllableBound;
+		for (unsigned int n=0; n<m_modelOrder; ++n)
+		{
+			result[i] += (coefficients[n] * std::pow(sampleTime,n));
+		}
+
+		result[i] *= std::exp((-1)*sampleTime*m_optVariables[2]);
+		result[i] += (m_optVariables[1] + m_optVariables[0]*sampleTime);
+	}
+
+	m_sythesizedF0Sampled = result;
+}

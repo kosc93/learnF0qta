@@ -40,7 +40,7 @@ void TrainingFileGenerator::read_input_files()
 	std::getline(finTargets, line); // ingnore first line (header)
 	while (std::getline(finTargets, line))
 	{
-		auto pos = line.find('\t');
+		auto pos = line.find(',');
 		m_targetMap.insert(std::pair<std::string,std::string>(line.substr(0,pos), line.substr(pos+1,line.size())));
 	}
 
@@ -59,7 +59,7 @@ void TrainingFileGenerator::write_to_output_file()
 	fout.open (m_trainingFile);
 
 	// write header to outputfile
-	fout << "word,S1,N1,P1,F1,G1,L1,O1,S2,N2,P2,F2,G2,L2,O2,S3,N3,P3,F3,G3,L3,O3,ZP,ZH,LR,LL,NL,S4,N4,P4,F4,G4,L4,O4,S5,N5,P5,F5,G5,L5,O5,S6,N6,P6,F6,G6,L6,O6,S7,N7,P7,F7,G7,L7,O7,AA,AV,AF,WA,WN,AS,NS,PO,PC,PV,PF,F_i,m_,b_,l_,d_,rmse,corr" << std::endl;
+	fout << "word,S1,N1,P1,F1,G1,L1,O1,S2,N2,P2,F2,G2,L2,O2,S3,N3,P3,F3,G3,L3,O3,ZP,ZH,LR,LL,NL,S4,N4,P4,F4,G4,L4,O4,S5,N5,P5,F5,G5,L5,O5,S6,N6,P6,F6,G6,L6,O6,S7,N7,P7,F7,G7,L7,O7,AA,AV,AF,WA,WN,AS,NS,PO,PC,PV,PF,m_,b_,l_,d_,rmse,corr" << std::endl;
 
 	// write data to output file
 	for (std::map<std::string,std::string>::iterator it=m_featureMap.begin(); it!=m_featureMap.end(); ++it)
@@ -70,7 +70,7 @@ void TrainingFileGenerator::write_to_output_file()
 			std::vector<std::string> featuresAll;
 			utilities::split(featuresAll, it->second, ",");
 			std::vector<std::string> targetsAll;
-			utilities::split(targetsAll, (m_targetMap.find(it->first))->second, "\t");
+			utilities::split(targetsAll, (m_targetMap.find(it->first))->second, ",");
 
 			// get number of syllables
 			const int numTar = 6;
@@ -88,15 +88,15 @@ void TrainingFileGenerator::write_to_output_file()
 				}
 
 				// get relevant data from target file: initialf0,mean_rmse,grand_correlation,1__slope,height,strength,duration,rmse,correlation
-				fout << targetsAll[0] << "," << targetsAll[3+i*numTar] << "," << targetsAll[4+i*numTar] << "," << targetsAll[5+i*numTar] << ","	<< targetsAll[6+i*numTar] << "," << targetsAll[7+i*numTar] << "," << targetsAll[8+i*numTar] << std::endl;
+				fout << targetsAll[0+i*numTar] << "," << targetsAll[1+i*numTar] << "," << targetsAll[2+i*numTar] << ","	<< targetsAll[3+i*numTar] << "," << targetsAll[4+i*numTar] << "," << targetsAll[5+i*numTar] << std::endl;
 
 				// store values for statistics
-				m_slope.push_back(std::stod(targetsAll[3+i*numTar]));
-				m_offset.push_back(std::stod(targetsAll[4+i*numTar]));
-				m_strength.push_back(std::stod(targetsAll[5+i*numTar]));
-				m_duration.push_back(std::stod(targetsAll[6+i*numTar]));
-				m_rmse.push_back(std::stod(targetsAll[7+i*numTar]));
-				m_corr.push_back(std::stod(targetsAll[8+i*numTar]));
+				m_slope.push_back(std::stod(targetsAll[0+i*numTar]));
+				m_offset.push_back(std::stod(targetsAll[1+i*numTar]));
+				m_strength.push_back(std::stod(targetsAll[2+i*numTar]));
+				m_duration.push_back(std::stod(targetsAll[3+i*numTar]));
+				m_rmse.push_back(std::stod(targetsAll[4+i*numTar]));
+				m_corr.push_back(std::stod(targetsAll[5+i*numTar]));
 			}
 		}
 	}

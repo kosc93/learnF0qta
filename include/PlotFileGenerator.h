@@ -12,8 +12,8 @@ public:
 
 private:
 	// member functions
-	void split( std::vector<std::string> & theStringVector, const  std::string  & theString, const  std::string  & theDelimiter);
 	void read_data_file ();
+	void analyze_syllable_bounds ();
 	void analyze_target_line ();
 	void generate_plot_file ();
 	void call_gnuplot ();
@@ -28,7 +28,9 @@ private:
 	std::vector<double> m_offset;
 	std::vector<double> m_strength;
 	std::vector<double> m_duration;
+	std::vector<double> m_bounds;
 	std::vector<double> m_rmse;
+	std::vector<double> m_corr;
 
 	double m_rmseMean;
 

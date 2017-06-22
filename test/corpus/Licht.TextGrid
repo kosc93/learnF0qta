@@ -2,7 +2,7 @@ File type = "ooTextFile"
 Object class = "TextGrid"
 
 xmin = 0 
-xmax = 1.18731378371956 
+xmax = 0.9573860489186634 
 tiers? <exists> 
 size = 2 
 item []: 
@@ -10,31 +10,27 @@ item []:
         class = "IntervalTier" 
         name = "Position" 
         xmin = 0 
-        xmax = 1.18731378371956 
-        intervals: size = 4 
+        xmax = 0.9573860489186634 
+        intervals: size = 3 
         intervals [1]:
             xmin = 0 
-            xmax = 0.30118385484730936 
+            xmax = 0.20326239868196172 
             text = "" 
         intervals [2]:
-            xmin = 0.30118385484730936 
-            xmax = 0.5672043658943267 
+            xmin = 0.20326239868196172 
+            xmax = 0.7405994768764543 
             text = "1" 
         intervals [3]:
-            xmin = 0.5672043658943267 
-            xmax = 0.966396724532359 
-            text = "2" 
-        intervals [4]:
-            xmin = 0.966396724532359 
-            xmax = 1.18731378371956 
+            xmin = 0.7405994768764543 
+            xmax = 0.9573860489186634 
             text = "" 
     item [2]:
         class = "IntervalTier" 
         name = "ORT" 
         xmin = 0 
-        xmax = 1.18731378371956 
+        xmax = 0.9573860489186634 
         intervals: size = 1 
         intervals [1]:
             xmin = 0 
-            xmax = 1.18731378371956 
-            text = "ähnlich" 
+            xmax = 0.9573860489186634 
+            text = "Licht" 
