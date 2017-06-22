@@ -1,7 +1,7 @@
 ## Description
 learnF0qta is a software tool for learning qTA parameters of a speech-corpus for F0 prediction utilizing PENTAtrainer1. The main part of the software is a shell script calling different C++ programs and managing the file input and output. A modified version of [PENTAtrainer1](http://www.homepages.ucl.ac.uk/~uclyyix/PENTAtrainer1/) is used for extracting optimal qTA targets for F0-resythesis. Based on this data and the SAMPA transcription, a training file is generated which is used for the training of different machine learning methods. Additional features like generating plots and some statistics are also implemented. The whole software works full automatically without any user interaction or GUI.
 
-<img src="https://user-images.githubusercontent.com/18279731/27442818-91b91188-5771-11e7-823c-58a22d07d2fa.png" alt="overview" width="350">
+<img src="https://user-images.githubusercontent.com/18279731/27442818-91b91188-5771-11e7-823c-58a22d07d2fa.png" alt="overview" width="500">
 
 ## Requirements
 The software is developed on a 64-bit Linux system with Ubuntu 16.04 LTS. The `g++` compiler with `c++11` support is required. Only the Praat binary is delivered, the other code is build natively by the installation script.
@@ -74,7 +74,7 @@ Start the program by calling the shell-script with the path to the xml configura
 ```
 All the calculated results are found in the parent directory of the defined path to corpus in the xml config file. Additionally, a directory `plots` is created containing a plot for each original file which looks as the following:
 
-![qTA resynthesis](example.png?raw=true)
+![qTA resynthesis](https://user-images.githubusercontent.com/18279731/27442827-99598742-5771-11e7-8a43-b89ec0b87b83.png?raw=true)
  
 ## Miscellaneous
 If there are words with 'Umlaut' (ä,ö,ü), the target file returned from the Praat script will be encoded with UTF-16. Otherwise the encoding is UTF-8. `learnF0qta` uses the command line tool `iconv` for encoding conversion. The user should check the correct encoding for the used system. 
