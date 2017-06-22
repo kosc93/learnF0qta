@@ -34,6 +34,7 @@ shift = syllable_shift
 n = model_order
 cnt = 0
 pulse = 0
+resynthesis = 1
 
 ##### check validity
 assert f0_min < f0_max
@@ -103,7 +104,9 @@ if task = 1
 		endif
 
 		##### find qTA parameters
-		call qtaAnalysis
+		if resynthesis
+			call qtaAnalysis
+		endif
 
 		##### save result
 		select PitchTier fittedf0
@@ -117,6 +120,9 @@ if task = 1
 		select TableOfReal targets
 		Write to headerless spreadsheet file... 'directory$''name$'.targets
 		Remove
+
+		##### create resynthesized audio file
+		call qtaResynthesis
 
 		##### clean up
 		select PitchTier semitonef0
@@ -228,7 +234,7 @@ procedure qtaAnalysis
 
 			if fileReadable("./findqta")
 				cnt = cnt + 1
-				runSystem: "printf '\r\tcalculated targets: 'cnt''"
+				runSystem: "printf '\r\t calculated targets: 'cnt''"
 				runSystem: "./findqta ./ 'algorithm' 'random_iterations'"
 			else
 				printline Cannot find findqta!
@@ -430,4 +436,21 @@ procedure assembleTargetFile
 		appendFile: "targets.txt",newline$
 
 	endfor
+endproc
+
+########## (Procedure) resynthesize with approximated F0	 ##########
+procedure qtaResynthesis
+	select Sound 'name$'
+	To Manipulation... 0.01 75 600
+	select PitchTier fittedf0
+	Formula... exp(self*ln(2)/12)
+	plus Manipulation 'name$'
+	Replace pitch tier
+	select Manipulation 'name$'
+	Get resynthesis (overlap-add)
+	createDirectory: "'directory$'../resynthesis"
+	nowarn Save as WAV file: "'directory$'../resynthesis/'name$'_qTA.wav"
+	Remove
+	select Manipulation 'name$'
+	Remove
 endproc
