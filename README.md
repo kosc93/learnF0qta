@@ -15,6 +15,10 @@ sudo apt-get install gnuplot
 ```
 sudo apt-get install xmlstarlet
 ```
+`uchardet`: This tools is used for determining encoding of text files. Praat returns UTF-16 encoding if it processes *Umlaute (ä,ö,ü)*.
+```
+sudo apt-get install xmlstarlet
+```
 Additionally, the following command line tools which are pre-installed on every Ubuntu system are usedin the shell script.
 
 `iconv`: Converts the encoding of the target file generated from the praat script to the systems encoding.
