@@ -128,7 +128,7 @@ void PlotFileGenerator::generate_plot_file()
 	fout << "set xlabel 'Time [sec]'" << std::endl;
 	fout << "set ylabel 'Frequency [st]'" << std::endl;
 
-	// write syllable bound information to plot file
+	//  write syllable bound information to plot file
 	fout << std::endl << "##### plot syllable bounds #####" << std::endl;
 	for (unsigned int i=0; i<m_bounds.size(); ++i)
 	{
