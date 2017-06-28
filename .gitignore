@@ -34,6 +34,12 @@ bin/*
 .cproject
 .project
 
+# tools
+tools/svm-scale
+tools/svm-train
+tools/svm-predict
+tools/grid.py
+
 # test
 *.txt
 test/data/FEATURES.csv
