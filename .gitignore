@@ -36,9 +36,9 @@ bin/*
 
 # test
 *.txt
-*.results
-test/FEATURES.csv
-test/TARGETS.csv
-test/TRAINING.csv
+#test/data/FEATURES.csv
+#test/data/TARGETS.csv
+#test/data/TRAINING.csv
 test/plots/*
 test/resynthesis/*
+test/svm/*	
