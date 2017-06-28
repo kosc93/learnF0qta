@@ -47,5 +47,6 @@ test/data/TARGETS.csv
 test/data/TRAINING.csv
 test/plots/*
 test/svm/*
-test/resynthesis/*	
+test/resynthesis/*
+*.txt
 
