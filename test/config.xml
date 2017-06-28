@@ -1,8 +1,14 @@
 <config>
-	<path>test/corpus</path>
+	<stages>
+		<parametersearch>1</parametersearch>
+		<plotdata>1</plotdata>
+		<trainingfile>1</trainingfile>
+		<svmtraining>1</svmtraining>
+		<kernelCV>1</kernelCV>
+	</stages>
 	<praat>
 		<systemorder>5</systemorder>
-		<syllableshift>30</syllableshift>
+		<syllableshift>0</syllableshift>
 		<slopemin>-10</slopemin>
 		<slopemax>10</slopemax>
 		<offsetmin>70</offsetmin>
@@ -10,8 +16,20 @@
 		<strengthmin>1</strengthmin>
 		<strengthmax>80</strengthmax>
 	</praat>
-	<optimization>
+	<findqta>
 		<randominit>5</randominit>
 		<algorithm>34</algorithm>
-	</optimization>
+	</findqta>
+	<svm>
+		<kernel>2</kernel>
+		<epsilon>0.1</epsilon>
+		<constantSlope>1.0</constantSlope>
+		<gammaSlope>1.0</gammaSlope>
+		<constantOffset>1.0</constantOffset>
+		<gammaOffset>1.0</gammaOffset>
+		<constantStrength>1.0</constantStrength>
+		<gammaStrength>1.0</gammaStrength>
+		<constantDuration>1.0</constantDuration>
+		<gammaDuration>1.0</gammaDuration>
+	</svm>
 </config>

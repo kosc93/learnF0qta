@@ -1,3 +1,4 @@
+##### NLOPT #####
 cd tools/
 tar -zxvf nlopt-2.4.2.tar.gz
 cd nlopt-2.4.2/
@@ -10,7 +11,20 @@ cp /tmp/nlopt-install/lib/libnlopt.a ../../lib/
 rm -r /tmp/nlopt-install/
 cd ../
 rm -r nlopt-2.4.2/
-tar -zxvf PENTAtrainer1N.tar.gz
-
 cd ../
+
+##### LIBSVM #####
+cd tools/
+tar -zxvf libsvm-3.22.tar.gz
+cd libsvm-3.22/
+make
+cp svm-scale ../
+cp svm-train ../
+cp svm-predict ../
+cp tools/grid.py ../
+cd ../
+rm -r libsvm-3.22/
+cd ../
+
+##### Build #####
 make all

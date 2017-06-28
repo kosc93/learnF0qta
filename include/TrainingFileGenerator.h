@@ -9,19 +9,21 @@
 
 class TrainingFileGenerator {
 public:
-	TrainingFileGenerator(std::string featureFile, std::string targetFile, std::string trainingFile);
+	TrainingFileGenerator(std::string path, std::string featureFile, std::string targetFile, std::string trainingFile);
 	void print_statistics();
 
 private:
 	// analysis
 	void read_input_files();
 	void write_to_output_file();
+	void generate_libsvm_files();
 	void calculate_statistics();
 
 	// members
 	std::string m_featureFile;
 	std::string m_targetFile;
 	std::string m_trainingFile;
+	std::string m_path;
 	std::map<std::string, std::string> m_featureMap;
 	std::map<std::string, std::string> m_targetMap;
 	unsigned int m_syllables;

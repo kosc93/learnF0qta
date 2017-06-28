@@ -1,16 +1,19 @@
 #include "TrainingFileGenerator.h"
 #include "utilities.h"
 #include "types.h"
+#include <sys/stat.h>
 #include <cmath>
 
-TrainingFileGenerator::TrainingFileGenerator(std::string featureFile, std::string targetFile, std::string trainingFile)
+TrainingFileGenerator::TrainingFileGenerator(std::string path, std::string featureFile, std::string targetFile, std::string trainingFile)
 {
-	m_featureFile = featureFile;
-	m_targetFile = targetFile;
-	m_trainingFile = trainingFile;
+	m_path = path;
+	m_featureFile = path + featureFile;
+	m_targetFile = path + targetFile;
+	m_trainingFile = path + trainingFile;
 
 	read_input_files();
 	write_to_output_file();
+	generate_libsvm_files();
 }
 
 void TrainingFileGenerator::read_input_files()
@@ -97,6 +100,66 @@ void TrainingFileGenerator::write_to_output_file()
 				m_duration.push_back(std::stod(targetsAll[3+i*numTar]));
 				m_rmse.push_back(std::stod(targetsAll[4+i*numTar]));
 				m_corr.push_back(std::stod(targetsAll[5+i*numTar]));
+			}
+		}
+	}
+}
+
+void TrainingFileGenerator::generate_libsvm_files()
+{
+	// create directory for plots and output file (plot file)
+	std::string path = m_path + "../svm/";
+	const int dir_err = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	if (-1 == dir_err)
+	{
+		//std::cout << "ERROR creating directory: " << m_path + "svm/" << std::endl;
+	}
+
+	// create output files and write data to it in LIBSVM format
+	std::ofstream foutSlope, foutOffset, foutStrength, foutDuration;
+	foutSlope.open (path+"slope.training");
+	foutOffset.open (path+"offset.training");
+	foutStrength.open (path+"strength.training");
+	foutDuration.open (path+"duration.training");
+
+	// write data to output file
+	for (std::map<std::string,std::string>::iterator it=m_featureMap.begin(); it!=m_featureMap.end(); ++it)
+	{
+		if (m_targetMap.find(it->first) != m_targetMap.end())
+		{
+			// tokenize strings
+			std::vector<std::string> featuresAll;
+			utilities::split(featuresAll, it->second, ",");
+			std::vector<std::string> targetsAll;
+			utilities::split(targetsAll, (m_targetMap.find(it->first))->second, ",");
+
+			// get number of syllables
+			const int numTar = 6;
+			int numSyl = featuresAll.size()/NUM_SYLLABLE_FEATURES;
+
+			// produce one output line for each syllable
+			for (int i=0; i<numSyl; ++i)
+			{
+				// get relevant data from target file: 1__slope,height,strength,duration,rmse,correlation
+				foutSlope << targetsAll[0+i*numTar] << " ";
+				foutOffset << targetsAll[1+i*numTar] << " ";
+				foutStrength << targetsAll[2+i*numTar] << " ";
+				foutDuration << targetsAll[3+i*numTar] << " ";
+
+				// get relevant features
+				for (int j=0; j<NUM_SYLLABLE_FEATURES; ++j)
+				{
+					foutSlope << j+1 << ":" << featuresAll[j+i*NUM_SYLLABLE_FEATURES] << " ";
+					foutOffset << j+1 << ":" << featuresAll[j+i*NUM_SYLLABLE_FEATURES] << " ";
+					foutStrength << j+1 << ":" << featuresAll[j+i*NUM_SYLLABLE_FEATURES] << " ";
+					foutDuration << j+1 << ":" << featuresAll[j+i*NUM_SYLLABLE_FEATURES] << " ";
+				}
+
+				// line break
+				foutSlope << std::endl;
+				foutOffset << std::endl;
+				foutStrength << std::endl;
+				foutDuration << std::endl;
 			}
 		}
 	}
