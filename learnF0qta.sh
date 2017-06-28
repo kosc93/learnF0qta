@@ -113,16 +113,16 @@ then
 		if [ $doKCV = 1 ]
 		then
 			printf "\n>>> [grid.py] determine optimal kernel parameters ... \n" | tee -a $output
-			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null $path/svm/slope.scaled)
+			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null -out null $path/svm/slope.scaled)
 			tmpP=${tmpP% *}; Gslope=${tmpP##* }; tmpP=${tmpP% *}; Cslope=${tmpP##*)}
 			echo slope: C=$Cslope gamma=$Gslope | tee -a $output
-			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null $path/svm/offset.scaled)
+			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null -out null $path/svm/offset.scaled)
 			tmpP=${tmpP% *}; Goffset=${tmpP##* }; tmpP=${tmpP% *}; Coffset=${tmpP##*)}
 			echo offset: C=$Coffset gamma=$Goffset | tee -a $output
-			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null $path/svm/strength.scaled)
+			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null -out null $path/svm/strength.scaled)
 			tmpP=${tmpP% *}; Gstrength=${tmpP##* }; tmpP=${tmpP% *}; Cstrength=${tmpP##*)}
 			echo strength: C=$Cstrength gamma=$Gstrength | tee -a $output
-			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null $path/svm/duration.scaled)
+			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null -out null $path/svm/duration.scaled)
 			tmpP=${tmpP% *}; Gduration=${tmpP##* }; tmpP=${tmpP% *}; Cduration=${tmpP##*)}
 			echo duration: C=$Cduration gamma=$Gduration | tee -a $output
 		fi
