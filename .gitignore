@@ -48,3 +48,4 @@ test/data/TRAINING.csv
 test/plots/*
 test/svm/*
 test/resynthesis/*	
+
