@@ -11,9 +11,20 @@ TrainingFileGenerator::TrainingFileGenerator(std::string path, std::string featu
 	m_targetFile = path + targetFile;
 	m_trainingFile = path + trainingFile;
 
+	//sclaing
+	m_lower = 0.0;
+	m_upper = 1.0;
+
+	for (int j=0; j<NUM_SYLLABLE_FEATURES; ++j)
+	{
+		m_minFeatures.push_back(1.0);
+		m_maxFeatures.push_back(1.0);
+	}
+
 	read_input_files();
 	write_to_output_file();
-	generate_libsvm_files();
+	determine_scaling_factors();
+	generate_sparse_training_file();
 }
 
 void TrainingFileGenerator::read_input_files()
@@ -94,33 +105,28 @@ void TrainingFileGenerator::write_to_output_file()
 				fout << targetsAll[0+i*numTar] << "," << targetsAll[1+i*numTar] << "," << targetsAll[2+i*numTar] << ","	<< targetsAll[3+i*numTar] << "," << targetsAll[4+i*numTar] << "," << targetsAll[5+i*numTar] << std::endl;
 
 				// store values for statistics
-				m_slope.push_back(std::stod(targetsAll[0+i*numTar]));
-				m_offset.push_back(std::stod(targetsAll[1+i*numTar]));
-				m_strength.push_back(std::stod(targetsAll[2+i*numTar]));
-				m_duration.push_back(std::stod(targetsAll[3+i*numTar]));
-				m_rmse.push_back(std::stod(targetsAll[4+i*numTar]));
-				m_corr.push_back(std::stod(targetsAll[5+i*numTar]));
+				std::string value = targetsAll[0+i*numTar];
+				m_slope.push_back(std::stod(value.substr(value.find(":")+1,value.size())));
+				value = targetsAll[1+i*numTar];
+				m_offset.push_back(std::stod(value.substr(value.find(":")+1,value.size())));
+				value = targetsAll[2+i*numTar];
+				m_strength.push_back(std::stod(value.substr(value.find(":")+1,value.size())));
+				value = targetsAll[3+i*numTar];
+				m_duration.push_back(std::stod(value.substr(value.find(":")+1,value.size())));
+				value = targetsAll[4+i*numTar];
+				m_rmse.push_back(std::stod(value.substr(value.find(":")+1,value.size())));
+				value = targetsAll[5+i*numTar];
+				m_corr.push_back(std::stod(value.substr(value.find(":")+1,value.size())));
 			}
 		}
 	}
 }
 
-void TrainingFileGenerator::generate_libsvm_files()
+void TrainingFileGenerator::generate_sparse_training_file()
 {
-	// create directory for plots and output file (plot file)
-	std::string path = m_path + "../svm/";
-	const int dir_err = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-	if (-1 == dir_err)
-	{
-		//std::cout << "ERROR creating directory: " << m_path + "svm/" << std::endl;
-	}
-
-	// create output files and write data to it in LIBSVM format
-	std::ofstream foutSlope, foutOffset, foutStrength, foutDuration;
-	foutSlope.open (path+"slope.training");
-	foutOffset.open (path+"offset.training");
-	foutStrength.open (path+"strength.training");
-	foutDuration.open (path+"duration.training");
+	/*** SPARSE: create output file and write results to it ***/
+	std::ofstream foutSparse;
+	foutSparse.open (m_path + "corpus.training");
 
 	// write data to output file
 	for (std::map<std::string,std::string>::iterator it=m_featureMap.begin(); it!=m_featureMap.end(); ++it)
@@ -140,26 +146,35 @@ void TrainingFileGenerator::generate_libsvm_files()
 			// produce one output line for each syllable
 			for (int i=0; i<numSyl; ++i)
 			{
-				// get relevant data from target file: 1__slope,height,strength,duration,rmse,correlation
-				foutSlope << targetsAll[0+i*numTar] << " ";
-				foutOffset << targetsAll[1+i*numTar] << " ";
-				foutStrength << targetsAll[2+i*numTar] << " ";
-				foutDuration << targetsAll[3+i*numTar] << " ";
-
-				// get relevant features
+				/*** SPARSE: get relevant features ***/
 				for (int j=0; j<NUM_SYLLABLE_FEATURES; ++j)
 				{
-					foutSlope << j+1 << ":" << featuresAll[j+i*NUM_SYLLABLE_FEATURES] << " ";
-					foutOffset << j+1 << ":" << featuresAll[j+i*NUM_SYLLABLE_FEATURES] << " ";
-					foutStrength << j+1 << ":" << featuresAll[j+i*NUM_SYLLABLE_FEATURES] << " ";
-					foutDuration << j+1 << ":" << featuresAll[j+i*NUM_SYLLABLE_FEATURES] << " ";
+					std::string feature (featuresAll[j+i*NUM_SYLLABLE_FEATURES]);
+					double value (std::stod(feature.substr(feature.find(":")+1,feature.size())));
+
+					// scaling
+					double diff = m_maxFeatures[j]-m_minFeatures[j];
+					if (diff == 0)
+					{
+						value = 0;
+					}
+					else if (diff > 0)
+					{
+						value = m_lower + (m_upper-m_lower) * (value-m_minFeatures[j])/(m_maxFeatures[j]-m_minFeatures[j]);// scale value
+					}
+					else
+					{
+						std::cout << "ERROR: wrong scaling! max<min!";
+					}
+
+					if (value != 0)
+					{
+						foutSparse << j+1 << ":" << value << ",";
+					}
 				}
 
-				// line break
-				foutSlope << std::endl;
-				foutOffset << std::endl;
-				foutStrength << std::endl;
-				foutDuration << std::endl;
+				/*** SPARSE: get relevant data from target file: initialf0,mean_rmse,grand_correlation,1__slope,height,strength,duration,rmse,correlation ***/
+				foutSparse << targetsAll[0+i*numTar] << "," << targetsAll[1+i*numTar] << "," << targetsAll[2+i*numTar] << ","	<< targetsAll[3+i*numTar] << std::endl;
 			}
 		}
 	}
@@ -178,4 +193,34 @@ void TrainingFileGenerator::print_statistics()
 	std::cout << "\tStrength (lambda):\t\t" << utilities::mean(m_strength) << " +/- " << utilities::variance(m_strength) << std::endl;
 	std::cout << "\tRoot-Mean-Square-Error:\t\t" << utilities::mean(m_rmse) << " +/- " << utilities::variance(m_rmse) << std::endl;
 	std::cout << "\tCorrelation-Coefficient:\t" << utilities::mean(m_corr) << " +/- " << utilities::variance(m_corr) << std::endl;
+}
+
+void TrainingFileGenerator::determine_scaling_factors()
+{
+	// write data to output file
+	for (std::map<std::string,std::string>::iterator it=m_featureMap.begin(); it!=m_featureMap.end(); ++it)
+	{
+		if (m_targetMap.find(it->first) != m_targetMap.end())
+		{
+			// tokenize strings
+			std::vector<std::string> featuresAll;
+			utilities::split(featuresAll, it->second, ",");
+
+			// get number of syllables
+			int numSyl = featuresAll.size()/NUM_SYLLABLE_FEATURES;
+
+			// produce one output line for each syllable
+			for (int i=0; i<numSyl; ++i)
+			{
+				// get relevant features
+				for (int j=0; j<NUM_SYLLABLE_FEATURES; ++j)
+				{
+					std::string feature (featuresAll[j+i*NUM_SYLLABLE_FEATURES]);
+					double value (std::stod(feature.substr(feature.find(":")+1,feature.size())));
+					m_minFeatures[j] = std::min(value, m_minFeatures[j]);
+					m_maxFeatures[j] = std::max(value, m_maxFeatures[j]);
+				}
+			}
+		}
+	}
 }

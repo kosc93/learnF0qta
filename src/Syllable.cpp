@@ -179,7 +179,7 @@ void Syllable::build_feature_vector()
 	m_outputString = "";
 	for (uint16_t i=0; i<NUM_SYLLABLE_FEATURES; ++i)
 	{
-		m_outputString += (std::to_string(m_features[i]) + ",");
+		m_outputString += (std::to_string(i+1) + ":" + std::to_string(m_features[i]) + ",");
 	}
 }
 

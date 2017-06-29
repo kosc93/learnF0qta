@@ -431,7 +431,7 @@ procedure assembleTargetFile
 			c = Get value... i 6
 			
 			#write targets
-			appendFile: "targets.txt",",",m,",",b,",",l,",",d,",",r,",",c
+			appendFile: "targets.txt",",m:",m,",b:",b,",l:",l,",d:",d,",r:",r,",c:",c
 		endfor
 		appendFile: "targets.txt",newline$
 

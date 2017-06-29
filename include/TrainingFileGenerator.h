@@ -16,7 +16,8 @@ private:
 	// analysis
 	void read_input_files();
 	void write_to_output_file();
-	void generate_libsvm_files();
+	void generate_sparse_training_file();
+	void determine_scaling_factors();
 	void calculate_statistics();
 
 	// members
@@ -29,12 +30,19 @@ private:
 	unsigned int m_syllables;
 	unsigned int m_skipped;
 
+	// statistics
 	std::vector<double> m_slope;
 	std::vector<double> m_offset;
 	std::vector<double> m_strength;
 	std::vector<double> m_duration;
 	std::vector<double> m_rmse;
 	std::vector<double> m_corr;
+
+	// scaling
+	double m_lower;
+	double m_upper;
+	std::vector<double> m_minFeatures;
+	std::vector<double> m_maxFeatures;
 
 };
 

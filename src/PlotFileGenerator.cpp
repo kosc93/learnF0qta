@@ -15,7 +15,8 @@ PlotFileGenerator::PlotFileGenerator (std::string targetLine, std::string path, 
 	tokens.erase(tokens.begin());
 	for (std::vector<std::string>::iterator it = tokens.begin() ; it != tokens.end(); ++it)
 	{
-		m_targetLineValues.push_back(std::stod(*it));
+		std::string value = it->substr(it->find(":")+1, it->size());
+		m_targetLineValues.push_back(std::stod(value));
 	}
 
 	// compute input information

@@ -1,10 +1,10 @@
 <config>
 	<stages>
-		<parametersearch>1</parametersearch>
-		<plotdata>1</plotdata>
+		<parametersearch>0</parametersearch>
+		<plotdata>0</plotdata>
 		<trainingfile>1</trainingfile>
-		<svmtraining>1</svmtraining>
-		<kernelCV>1</kernelCV>
+		<svmtraining>0</svmtraining>
+		<kernelCV>0</kernelCV>
 	</stages>
 	<praat>
 		<systemorder>5</systemorder>
