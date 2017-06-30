@@ -3,6 +3,8 @@
 #include "types.h"
 #include <sys/stat.h>
 #include <cmath>
+#include <cstdlib>
+#include <time.h>
 
 TrainingFileGenerator::TrainingFileGenerator(std::string path, std::string featureFile, std::string targetFile, std::string trainingFile)
 {
@@ -25,6 +27,7 @@ TrainingFileGenerator::TrainingFileGenerator(std::string path, std::string featu
 	write_to_output_file();
 	determine_scaling_factors();
 	generate_sparse_training_file();
+	separate_training_test_files();
 }
 
 void TrainingFileGenerator::read_input_files()
@@ -93,7 +96,7 @@ void TrainingFileGenerator::write_to_output_file()
 			// produce one output line for each syllable
 			for (int i=0; i<numSyl; ++i)
 			{
-				fout << it->first << ",";
+				fout << "label:" << it->first << ",";
 
 				// get relevant features
 				for (int j=0; j<NUM_SYLLABLE_FEATURES; ++j)
@@ -126,7 +129,7 @@ void TrainingFileGenerator::generate_sparse_training_file()
 {
 	/*** SPARSE: create output file and write results to it ***/
 	std::ofstream foutSparse;
-	foutSparse.open (m_path + "corpus.training");
+	foutSparse.open (m_path + "corpus.data");
 
 	// write data to output file
 	for (std::map<std::string,std::string>::iterator it=m_featureMap.begin(); it!=m_featureMap.end(); ++it)
@@ -146,6 +149,10 @@ void TrainingFileGenerator::generate_sparse_training_file()
 			// produce one output line for each syllable
 			for (int i=0; i<numSyl; ++i)
 			{
+				foutSparse << "label:" << it->first << ",";
+				/*** SPARSE: get relevant data from target file: initialf0,mean_rmse,grand_correlation,1__slope,height,strength,duration,rmse,correlation ***/
+				foutSparse << targetsAll[0+i*numTar] << "," << targetsAll[1+i*numTar] << "," << targetsAll[2+i*numTar] << "," << targetsAll[3+i*numTar];
+
 				/*** SPARSE: get relevant features ***/
 				for (int j=0; j<NUM_SYLLABLE_FEATURES; ++j)
 				{
@@ -169,23 +176,130 @@ void TrainingFileGenerator::generate_sparse_training_file()
 
 					if (value != 0)
 					{
-						foutSparse << j+1 << ":" << value << ",";
+						foutSparse << "," << j+1 << ":" << value;
 					}
 				}
-
-				/*** SPARSE: get relevant data from target file: initialf0,mean_rmse,grand_correlation,1__slope,height,strength,duration,rmse,correlation ***/
-				foutSparse << targetsAll[0+i*numTar] << "," << targetsAll[1+i*numTar] << "," << targetsAll[2+i*numTar] << ","	<< targetsAll[3+i*numTar] << std::endl;
+				foutSparse << std::endl;
 			}
 		}
 	}
 }
 
+void TrainingFileGenerator::separate_training_test_files()
+{
+	// create a file-reading object for feature-file
+	std::ifstream fin;
+	fin.open(m_path + "corpus.data"); // open input file
+	if (!fin.good())
+		std::cerr << "ERROR: corpus.data file not found! " << std::endl;
+
+	// read lines to vector
+	std::string line;
+	std::vector<std::string> trainSamples;
+	while (std::getline(fin, line))
+	{
+		trainSamples.push_back(line);
+	}
+
+	// divide set into training and test
+	double fraction = 0.75;
+	unsigned int numSamples = trainSamples.size();
+	unsigned int numTraining = std::ceil(fraction * numSamples);
+	unsigned int numTest = numSamples - numTraining;
+
+	// choose test data randomly
+	std::vector<std::string> testSamples;
+	srand (0); //srand (time(NULL));
+	for (unsigned int i=0; i<numTest; )
+	{
+		// random index + initialize
+		unsigned int index = std::rand() % (trainSamples.size());
+		bool prev = true, next = true;
+		unsigned int radius = 1;
+		unsigned int indexStart = index, indexEnd = index;
+
+		while(prev || next)
+		{
+			std::string label, prevLabel, nextLabel;
+			std::vector<std::string> tokens;
+
+			// get label
+			utilities::split(tokens,trainSamples[index],",");
+			label = ( tokens[0].substr( tokens[0].find(":")+1, tokens[0].size()-1) );
+			tokens.clear();
+
+			if (index-radius >= 0)
+			{
+				utilities::split(tokens,trainSamples[index-radius],",");
+				prevLabel = ( tokens[0].substr( tokens[0].find(":")+1, tokens[0].size()-1) );
+				tokens.clear();
+			}
+
+			if (index+radius < trainSamples.size())
+			{
+				utilities::split(tokens,trainSamples[index+radius],",");
+				nextLabel = ( tokens[0].substr( tokens[0].find(":")+1, tokens[0].size()-1) );
+				tokens.clear();
+			}
+
+			// compare label
+			if (label == prevLabel)
+			{
+				indexStart--;
+			}
+			else
+			{
+				prev = false;
+			}
+
+			if (label == nextLabel)
+			{
+				indexEnd++;
+			}
+			else
+			{
+				next = false;
+			}
+
+			radius++;
+		}
+
+		// copy and erase data
+		for (unsigned int j = indexStart; j <= indexEnd; ++j)
+		{
+			testSamples.push_back(trainSamples[j]);
+			++i;
+		}
+		trainSamples.erase(trainSamples.begin()+indexStart, trainSamples.begin()+indexEnd+1);
+	}
+
+	// write to files
+	std::ofstream foutTrain, foutTest;
+	foutTrain.open (m_path + "corpus.training");
+	foutTest.open (m_path + "corpus.test");
+
+	for (std::string s : trainSamples)
+	{
+		foutTrain << s << std::endl;
+	}
+
+	for (std::string s : testSamples)
+	{
+		foutTest << s << std::endl;
+	}
+
+	m_numTrain = trainSamples.size();
+	m_numTest = testSamples.size();
+}
+
 void TrainingFileGenerator::print_statistics()
 {
 	// print processing information
-	std::cout << "\tNumber of processed words:\t" << std::min(m_targetMap.size(),m_featureMap.size()) << std::endl;
-	std::cout << "\tNumber of non-processed words:\t" << std::abs((int)m_targetMap.size()-(int)m_featureMap.size()) << std::endl;
-	std::cout << "\tNumber of assembled syllables:\t" << m_slope.size() << std::endl;
+	std::cout << "\n\tNumber of processed words:\t\t" << std::min(m_targetMap.size(),m_featureMap.size()) << std::endl;
+	std::cout << "\tNumber of non-processed words:\t\t" << std::abs((int)m_targetMap.size()-(int)m_featureMap.size()) << std::endl;
+	std::cout << "\tNumber of assembled syllables:\t\t" << m_slope.size() << std::endl;
+	std::cout << "\tNumber of syllables for training:\t" << m_numTrain << std::endl;
+	std::cout << "\tNumber of syllables for testing:\t" << m_numTest << std::endl;
 
 	// print statistics
 	std::cout << "\tSlope (m):\t\t\t" << utilities::mean(m_slope) << " +/- " << utilities::variance(m_slope) << std::endl;

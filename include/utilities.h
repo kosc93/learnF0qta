@@ -26,6 +26,10 @@ double mean (const std::vector<double> &x);
 double variance (const std::vector<double> &x);
 double rmse (const std::vector<double> &x, const std::vector<double> &y); // root mean square error
 double correlation (const std::vector<double> &x, const std::vector<double> &y); // Pearson correlation coefficient
+
+// training file format operations
+int feat2index (std::string input);
+double feat2value (std::string input);
 }
 
 

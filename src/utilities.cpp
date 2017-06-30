@@ -1,5 +1,6 @@
 #include "utilities.h"
 #include <cmath>
+#include <iostream>
 
 void utilities::split(std::vector<std::string> &theStringVector, const std::string &theString, const std::string &theDelimiter)
 {
@@ -133,4 +134,20 @@ double utilities::correlation (const std::vector<double> &x, const std::vector<d
 	}
 
 	return result;
+}
+
+int utilities::feat2index (std::string input)
+{
+	unsigned int start = 0;
+	unsigned int end = input.find(":");
+	std::string index = input.substr(start,end);
+	return std::stoi(index);
+}
+
+double utilities::feat2value (std::string input)
+{
+	unsigned int start = input.find(":")+1;
+	unsigned int end = input.size();
+	std::string value = input.substr(start,end);
+	return std::stod(value);
 }

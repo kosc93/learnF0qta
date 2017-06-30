@@ -17,6 +17,7 @@ private:
 	void read_input_files();
 	void write_to_output_file();
 	void generate_sparse_training_file();
+	void separate_training_test_files();
 	void determine_scaling_factors();
 	void calculate_statistics();
 
@@ -37,6 +38,8 @@ private:
 	std::vector<double> m_duration;
 	std::vector<double> m_rmse;
 	std::vector<double> m_corr;
+	unsigned int m_numTrain;
+	unsigned int m_numTest;
 
 	// scaling
 	double m_lower;
