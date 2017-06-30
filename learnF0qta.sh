@@ -24,15 +24,6 @@ then
 	eps="$( xmlstarlet sel -t -v 'config/svm/epsilon' "$1" )"
 	kernel="$( xmlstarlet sel -t -v 'config/svm/kernel' "$1" )"
 
-	Cslope="$( xmlstarlet sel -t -v 'config/svm/constantSlope' "$1" )"
-	Gslope="$( xmlstarlet sel -t -v 'config/svm/gammaSlope' "$1" )"
-	Coffset="$( xmlstarlet sel -t -v 'config/svm/constantOffset' "$1" )"
-	Goffset="$( xmlstarlet sel -t -v 'config/svm/gammaOffset' "$1" )"
-	Cstrength="$( xmlstarlet sel -t -v 'config/svm/constantStrength' "$1" )"
-	Gstrength="$( xmlstarlet sel -t -v 'config/svm/gammaStrength' "$1" )"
-	Cduration="$( xmlstarlet sel -t -v 'config/svm/constantDuration' "$1" )"
-	Gduration="$( xmlstarlet sel -t -v 'config/svm/gammaDuration' "$1" )"
-
 	##### input/output file #####
 	path=$(dirname $1)
 	filename=$(basename $1 .xml)
@@ -97,55 +88,15 @@ then
 		printf "\n>>> [sampa2vec] calculate feature vectors ... \n" | tee -a $output
 		bin/sampa2vec -f $path/data/SAMPA.csv $path/data/FEATURES.csv | tee -a $output
 
-		printf "\n>>> [linkqta] link features with targets and get statistics... \n" | tee -a $output
+		printf "\n>>> [linkqta] link features with targets, scale data and get statistics... \n" | tee -a $output
 		bin/linkqta $path/data/ FEATURES.csv TARGETS.csv TRAINING.csv | tee -a $output
 	fi
 
 	if [ $doSVM = 1 ]
 	then
-		##### scale data + SVM training #####
-		printf "\n>>> [svm-scale] scaling training data ... \n" | tee -a $output
-		tools/svm-scale -l 0.0 -u 1.0 $path/svm/slope.training > $path/svm/slope.scaled
-		tools/svm-scale -l 0.0 -u 1.0 $path/svm/offset.training > $path/svm/offset.scaled
-		tools/svm-scale -l 0.0 -u 1.0 $path/svm/strength.training > $path/svm/strength.scaled
-		tools/svm-scale -l 0.0 -u 1.0 $path/svm/duration.training > $path/svm/duration.scaled
-
-		if [ $doKCV = 1 ]
-		then
-			printf "\n>>> [grid.py] determine optimal kernel parameters ... \n" | tee -a $output
-			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null -out null $path/svm/slope.scaled)
-			tmpP=${tmpP% *}; Gslope=${tmpP##* }; tmpP=${tmpP% *}; Cslope=${tmpP##*)}
-			echo slope: C=$Cslope gamma=$Gslope | tee -a $output
-			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null -out null $path/svm/offset.scaled)
-			tmpP=${tmpP% *}; Goffset=${tmpP##* }; tmpP=${tmpP% *}; Coffset=${tmpP##*)}
-			echo offset: C=$Coffset gamma=$Goffset | tee -a $output
-			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null -out null $path/svm/strength.scaled)
-			tmpP=${tmpP% *}; Gstrength=${tmpP##* }; tmpP=${tmpP% *}; Cstrength=${tmpP##*)}
-			echo strength: C=$Cstrength gamma=$Gstrength | tee -a $output
-			tmpP=$(python tools/grid.py -svmtrain tools/svm-train -gnuplot null -out null $path/svm/duration.scaled)
-			tmpP=${tmpP% *}; Gduration=${tmpP##* }; tmpP=${tmpP% *}; Cduration=${tmpP##*)}
-			echo duration: C=$Cduration gamma=$Gduration | tee -a $output
-		fi
-
-		printf "\n>>> [svm-train] train support vector regression ... \n" | tee -a $output
-		printf "slope: " | tee -a $output
-		tools/svm-train -s 3 -p $eps -t $kernel -c $Cslope -g $Gslope $path/svm/slope.scaled $path/svm/slope.model | tee -a $output
-		printf "offset: " | tee -a $output
-		tools/svm-train -s 3 -p $eps -t $kernel -c $Coffset -g $Goffset $path/svm/offset.scaled $path/svm/offset.model | tee -a $output
-		printf "strength: " | tee -a $output
-		tools/svm-train -s 3 -p $eps -t $kernel -c $Cstrength -g $Gstrength $path/svm/strength.scaled $path/svm/strength.model | tee -a $output
-		printf "duration: " | tee -a $output
-		tools/svm-train -s 3 -p $eps -t $kernel -c $Cduration -g $Gduration $path/svm/duration.scaled $path/svm/duration.model | tee -a $output
-
-		printf "\n>>> [svm-predict] predict TA parameters ... \n" | tee -a $output
-		printf "slope: " | tee -a $output
-		tools/svm-predict $path/svm/slope.scaled $path/svm/slope.model $path/svm/slope.output | tee -a $output
-		printf "offset: " | tee -a $output
-		tools/svm-predict $path/svm/offset.scaled $path/svm/offset.model $path/svm/offset.output | tee -a $output
-		printf "strength: " | tee -a $output
-		tools/svm-predict $path/svm/strength.scaled $path/svm/strength.model $path/svm/strength.output | tee -a $output
-		printf "duration: " | tee -a $output
-		tools/svm-predict $path/svm/duration.scaled $path/svm/duration.model $path/svm/duration.output | tee -a $output
+		##### SVM training + prediction #####
+		printf "\n>>> [trainsvm] train support vector regression and predict test samples ... \n" | tee -a $output
+		bin/trainsvm $path/data/ corpus.training corpus.test
 	fi
 
 	ELAPSED_TIME=$(($SECONDS - $START_TIME))

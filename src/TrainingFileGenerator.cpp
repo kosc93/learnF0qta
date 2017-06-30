@@ -209,7 +209,7 @@ void TrainingFileGenerator::separate_training_test_files()
 
 	// choose test data randomly
 	std::vector<std::string> testSamples;
-	srand (0); //srand (time(NULL));
+	srand (time(NULL)); // srand (0);
 	for (unsigned int i=0; i<numTest; )
 	{
 		// random index + initialize

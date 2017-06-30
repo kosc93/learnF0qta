@@ -40,11 +40,21 @@ tools/svm-train
 tools/svm-predict
 tools/grid.py
 
+# libsvm
+src/svm.cpp
+inlucde/svm.h
+
+# tmp
+.tmp/*
+
 # test
 *.txt
 test/data/FEATURES.csv
 test/data/TARGETS.csv
 test/data/TRAINING.csv
+test/data/corpus.data
+test/data/corpus.training
+test/data/corpus.test
 test/plots/*
 test/svm/*
 test/resynthesis/*

@@ -41,7 +41,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 clean:
 	@echo " Cleaning..."; 
 	@echo " $(RM) -r $(BUILDDIR) $(BINDIR)"; $(RM) -r $(BUILDDIR) $(BINDIR)
-	@echo " $(RM) -r test/plots test/resynthesis test/svm ... "; $(RM) -r test/plots test/resynthesis test/svm test/data/FEATURES.csv test/data/TARGETS.csv test/data/TRAINING.csv test/output.txt
+	@echo " $(RM) -r test/plots test/resynthesis test/svm ... "; $(RM) -r test/plots test/resynthesis test/svm test/data/FEATURES.csv test/data/TARGETS.csv test/data/TRAINING.csv test/output.txt test/data/corpus.data test/data/corpus.test test/data/corpus.training
 
 test: all
 	@echo " Testing...";

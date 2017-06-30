@@ -3,8 +3,7 @@
 		<parametersearch>1</parametersearch>
 		<plotdata>1</plotdata>
 		<trainingfile>1</trainingfile>
-		<svmtraining>0</svmtraining>
-		<kernelCV>0</kernelCV>
+		<svmtraining>1</svmtraining>
 	</stages>
 	<praat>
 		<systemorder>5</systemorder>
@@ -23,13 +22,5 @@
 	<svm>
 		<kernel>2</kernel>
 		<epsilon>0.1</epsilon>
-		<constantSlope>32.0</constantSlope>
-		<gammaSlope>0.0078125</gammaSlope>
-		<constantOffset>0.0078125</constantOffset>
-		<gammaOffset>0.0078125</gammaOffset>
-		<constantStrength>0.0078125</constantStrength>
-		<gammaStrength>0.0078125</gammaStrength>
-		<constantDuration>0.0078125</constantDuration>
-		<gammaDuration>0.0078125</gammaDuration>
 	</svm>
 </config>
