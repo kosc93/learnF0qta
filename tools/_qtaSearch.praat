@@ -442,7 +442,7 @@ endproc
 procedure qtaResynthesis
 	select Sound 'name$'
 	To Manipulation... 0.01 75 600
-	select PitchTier fittedf0
+	select PitchTier fittedf0sampled
 	Formula... exp(self*ln(2)/12)
 	plus Manipulation 'name$'
 	Replace pitch tier

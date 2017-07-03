@@ -2,7 +2,7 @@ CC := g++
 SRCDIR := src
 BINDIR := bin
 BUILDDIR := build
-EXECUTABLES := $(BINDIR)/sampa2vec $(BINDIR)/findqta $(BINDIR)/linkqta $(BINDIR)/plotqta $(BINDIR)/trainsvm
+EXECUTABLES := $(BINDIR)/sampa2vec $(BINDIR)/findqta $(BINDIR)/linkqta $(BINDIR)/plotqta $(BINDIR)/trainsvm $(BINDIR)/predictqta
  
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -32,6 +32,10 @@ $(BINDIR)/plotqta: $(BUILDDIR)/_plotqta.o $(BUILDDIR)/PlotFileGenerator.o $(BUIL
 $(BINDIR)/trainsvm: $(BUILDDIR)/_trainsvm.o $(BUILDDIR)/SVMTrainer.o $(BUILDDIR)/utilities.o $(BUILDDIR)/svm.o
 	@echo " Linking" $@ "... "
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
+
+$(BINDIR)/predictqta: $(BUILDDIR)/_predictqta.o $(BUILDDIR)/SystemTA.o $(BUILDDIR)/PraatFileIO.o $(BUILDDIR)/utilities.o
+	@echo " Linking" $@ "... "
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)

@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
 
 	/********** Compute Results **********/
 	system.set_optimum(x);
-	x = system.get_optimal_variables();	// converts b
+	x = system.get_optimal_variables();	// converts b -> removed!!!
 
 	// file: output file
 	praatFiles.generate_output_file(system);

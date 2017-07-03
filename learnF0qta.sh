@@ -41,14 +41,14 @@ then
 	if [ $doSearch = 1 ]
 	then
 		##### get optimal targets #####
-		cp tools/_qtaParameterSearch.praat $path/corpus
+		cp tools/_qtaSearch.praat $path/corpus
 		cp bin/findqta $path/corpus
 
 		printf ">>> [praat] process annotated audio files ... \n" | tee -a $output
-		tools/praat --run $path/corpus/_qtaParameterSearch.praat \"Compute qTA parameters\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $sshift $N $algo $iter
+		tools/praat --run $path/corpus/_qtaSearch.praat \"Compute qTA parameters\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $sshift $N $algo $iter
 
 		printf "\n>>> [praat] calculate ensemble file ... \n" | tee -a $output
-		tools/praat --run $path/corpus/_qtaParameterSearch.praat \"Assemble ensemble file\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $sshift $N $algo $iter
+		tools/praat --run $path/corpus/_qtaSearch.praat \"Assemble ensemble file\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $sshift $N $algo $iter
 
 		printf "\n>>> [iconv] convert encoding of target ensemble file ... \n" | tee -a $output
 		if [ "$(uchardet $path/corpus/targets.txt)" = "UTF-16" ]
@@ -60,7 +60,7 @@ then
 			cp $path/corpus/targets.txt $path/data/TARGETS.csv
 		fi
 
-		rm $path/corpus/_qtaParameterSearch.praat
+		rm $path/corpus/_qtaSearch.praat
 		rm $path/corpus/findqta
 	fi
 
@@ -79,7 +79,7 @@ then
 		bin/plotqta $path/data/TARGETS.csv $path/corpus/ $sshift
 
 		##### remove unneccessary files #####
-		rm $path/corpus/*.semitonef0; rm $path/corpus/*.qtaf0; rm $path/corpus/*.qtaf0sampled; rm $path/corpus/*.plot; rm $path/corpus/*.targets; rm $path/corpus/*.txt;
+		#rm $path/corpus/*.semitonef0; rm $path/corpus/*.qtaf0; rm $path/corpus/*.qtaf0sampled; rm $path/corpus/*.plot; rm $path/corpus/*.targets; rm $path/corpus/*.txt;
 	fi
 
 	if [ $doFile = 1 ]

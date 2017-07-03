@@ -172,7 +172,7 @@ void SVMTrainer::predict(std::string testFile)
 
 	// store results in file
 	std::ofstream fout;
-	fout.open(m_path + "../svm/test.predict");
+	fout.open(m_path + "../svm/svm.predict");
 
 	// read features to vector
 	std::string line;
