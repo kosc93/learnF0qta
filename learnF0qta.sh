@@ -45,7 +45,7 @@ then
 		then
 			iconv -f UTF-16 -t UTF-8 $path/corpus/targets.txt > targets.txt
 			cat targets.txt > $path/data/corpus-targets.csv
-			rm $path/corpus/targets.txt
+			rm $path/corpus/targets.txt targets.txt
 		else
 			cp $path/corpus/targets.txt $path/data/corpus-targets.csv
 		fi
@@ -80,7 +80,7 @@ then
 		then
 			iconv -f UTF-16 -t UTF-8 $path/corpus/targets.txt > targets.txt
 			cat targets.txt > $path/data/svm-prediction/svm-targets.csv
-			rm $path/corpus/targets.txt
+			rm $path/corpus/targets.txt targets.txt
 		else
 			cp $path/corpus/targets.txt $path/data/svm-prediction/svm-targets.csv
 		fi
