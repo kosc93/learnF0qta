@@ -1,0 +1,26 @@
+<config>
+	<stages>
+		<parametersearch>0</parametersearch>
+		<plotdata>1</plotdata>
+		<trainingfile>0</trainingfile>
+		<svmtraining>0</svmtraining>
+	</stages>
+	<praat>
+		<systemorder>5</systemorder>
+		<syllableshift>0</syllableshift>
+		<slopemin>-10</slopemin>
+		<slopemax>10</slopemax>
+		<offsetmin>70</offsetmin>
+		<offsetmax>120</offsetmax>
+		<strengthmin>1</strengthmin>
+		<strengthmax>80</strengthmax>
+	</praat>
+	<findqta>
+		<randominit>5</randominit>
+		<algorithm>34</algorithm>
+	</findqta>
+	<svm>
+		<kernel>2</kernel>
+		<epsilon>0.1</epsilon>
+	</svm>
+</config>

@@ -48,5 +48,17 @@ inlucde/svm.h
 .tmp/*
 
 # test
+test/data/plot-files/*
+test/data/svm-prediction/*
+test/plots/*
+test/audios/*
 
+test/data/corpus-features.csv
+test/data/corpus-initial.csv
+test/data/corpus-targets.csv
+test/data/corpus-training.csv
+
+test/data/samples-all.csv
+test/data/samples-test.csv
+test/data/samples-training.csv
 
