@@ -48,23 +48,23 @@ void SVMTrainer::determine_parameters ()
 
 	// individual parameters
 	m_parametersSlope = parameters;
-	m_parametersSlope.C = 32.0;
-	m_parametersSlope.gamma = 0.125;
-	m_parametersSlope.p = 1;
+	m_parametersSlope.C = 16.0;
+	m_parametersSlope.gamma = 0.25;
+	m_parametersSlope.p = 4;
 
 	m_parametersOffset = parameters;
-	m_parametersOffset.C = 128;
-	m_parametersOffset.gamma = 0.03125;
-	m_parametersOffset.p = 1;
+	m_parametersOffset.C = 32;
+	m_parametersOffset.gamma = 0.25;
+	m_parametersOffset.p = 2;
 
 	m_parametersStrength = parameters;
-	m_parametersStrength.C = 64;
-	m_parametersStrength.gamma = 0.25;
-	m_parametersStrength.p = 1;
+	m_parametersStrength.C = 16;
+	m_parametersStrength.gamma = 0.5;
+	m_parametersStrength.p = 4;
 
 	m_parametersDuration = parameters;
-	m_parametersDuration.C = 64;
-	m_parametersDuration.gamma = 0.03125;
+	m_parametersDuration.C = 128;
+	m_parametersDuration.gamma = 0.00195312;
 	m_parametersDuration.p = 0.25;
 }
 
