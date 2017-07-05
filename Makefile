@@ -2,7 +2,7 @@ CC := g++
 SRCDIR := src
 BINDIR := bin
 BUILDDIR := build
-EXECUTABLES := $(BINDIR)/sampa2vec $(BINDIR)/findqta $(BINDIR)/linkqta $(BINDIR)/plotqta $(BINDIR)/trainsvm $(BINDIR)/predictqta $(BINDIR)/initf0stat
+EXECUTABLES := $(BINDIR)/sampa2vec $(BINDIR)/findqta $(BINDIR)/linkqta $(BINDIR)/plotqta $(BINDIR)/trainsvm $(BINDIR)/predictqta $(BINDIR)/initf0stat $(BINDIR)/validatesvm
  
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -40,6 +40,10 @@ $(BINDIR)/predictqta: $(BUILDDIR)/_predictqta.o $(BUILDDIR)/SystemTA.o $(BUILDDI
 $(BINDIR)/initf0stat: $(BUILDDIR)/_initf0stat.o $(BUILDDIR)/utilities.o
 	@echo " Linking" $@ "... "
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
+
+$(BINDIR)/validatesvm: $(BUILDDIR)/_validatesvm.o $(BUILDDIR)/SVMValidater.o $(BUILDDIR)/utilities.o $(BUILDDIR)/svm.o
+	@echo " Linking" $@ "... "
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)

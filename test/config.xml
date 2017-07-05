@@ -1,9 +1,9 @@
 <config>
 	<stages>
-		<parametersearch>0</parametersearch>
+		<parametersearch>1</parametersearch>
+		<trainingfile>1</trainingfile>
+		<svmtraining>1</svmtraining>
 		<plotdata>1</plotdata>
-		<trainingfile>0</trainingfile>
-		<svmtraining>0</svmtraining>
 	</stages>
 	<praat>
 		<systemorder>5</systemorder>
