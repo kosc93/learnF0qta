@@ -7,7 +7,7 @@ EXECUTABLES := $(BINDIR)/sampa2vec $(BINDIR)/findqta $(BINDIR)/linkqta $(BINDIR)
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -Wall -std=c++11
+CFLAGS := -g -Wall -std=c++11 -fopenmp
 LIB := -L lib
 INC := -I include
 
@@ -43,7 +43,7 @@ $(BINDIR)/initf0stat: $(BUILDDIR)/_initf0stat.o $(BUILDDIR)/utilities.o
 
 $(BINDIR)/validatesvm: $(BUILDDIR)/_validatesvm.o $(BUILDDIR)/SVMValidater.o $(BUILDDIR)/utilities.o $(BUILDDIR)/svm.o
 	@echo " Linking" $@ "... "
-	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm -fopenmp
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)

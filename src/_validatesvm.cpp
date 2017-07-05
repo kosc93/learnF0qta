@@ -31,11 +31,13 @@ int main(int argc, char* argv[])
 	// grid search
 	int cnt (0);
 	std::string sampleFile (argv[1]);
-	for (int expC = 5; expC <= 10; ++expC)
+
+	#pragma omp parallel for schedule (dynamic) collapse(3)
+	for (int expC = -5; expC <= 10; ++expC)
 	{
-		for (int expG = -5; expG <= -1; ++expG)
+		for (int expG = -10; expG <= 0; ++expG)
 		{
-			for (int expE = -2; expE <= 0; ++expE)
+			for (int expE = -2; expE <= 2; ++expE)
 			{
 				double coefficient = std::pow(2.0,(double)expC);
 				double gamma = std::pow(2.0,(double)expG);
