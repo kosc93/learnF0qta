@@ -33,11 +33,11 @@ int main(int argc, char* argv[])
 	std::string sampleFile (argv[1]);
 
 	#pragma omp parallel for schedule (dynamic) collapse(3)
-	for (int expC = 3; expC <= 8; ++expC)
+	for (int expC = -5; expC <= 15; ++expC)
 	{
-		for (int expG = -10; expG <= -1; ++expG)
+		for (int expG = -15; expG <= 3; ++expG)
 		{
-			for (int expE = 0.25; expE <= 5; expE+=0.25)
+			for (int expE = -5; expE <= 5; ++expE)
 			{
 				double coefficient = std::pow(2.0,(double)expC);
 				double gamma = std::pow(2.0,(double)expG);
