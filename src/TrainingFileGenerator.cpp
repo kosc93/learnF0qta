@@ -6,12 +6,12 @@
 #include <cstdlib>
 #include <time.h>
 
-TrainingFileGenerator::TrainingFileGenerator(std::string path, std::string featureFile, std::string targetFile, std::string trainingFile)
+TrainingFileGenerator::TrainingFileGenerator(std::string featureFile, std::string targetFile, std::string outpath)
 {
-	m_path = path;
-	m_featureFile = path + featureFile;
-	m_targetFile = path + targetFile;
-	m_trainingFile = path + trainingFile;
+	m_outpath = outpath;
+	m_featureFile = featureFile;
+	m_targetFile = targetFile;
+	m_trainingFile = outpath + "corpus-training.csv";
 
 	//sclaing
 	m_lower = 0.0;
@@ -129,7 +129,8 @@ void TrainingFileGenerator::generate_sparse_training_file()
 {
 	/*** SPARSE: create output file and write results to it ***/
 	std::ofstream foutSparse;
-	foutSparse.open (m_path + "corpus.data");
+	foutSparse.open (m_outpath + "samples-all.csv");
+	foutSparse << "name,slope,offset,strength,duration,features(sparse)" << std::endl;
 
 	// write data to output file
 	for (std::map<std::string,std::string>::iterator it=m_featureMap.begin(); it!=m_featureMap.end(); ++it)
@@ -151,7 +152,7 @@ void TrainingFileGenerator::generate_sparse_training_file()
 			{
 				foutSparse << "label:" << it->first << ",";
 				/*** SPARSE: get relevant data from target file: initialf0,mean_rmse,grand_correlation,1__slope,height,strength,duration,rmse,correlation ***/
-				foutSparse << targetsAll[0+i*numTar] << "," << targetsAll[1+i*numTar] << "," << targetsAll[2+i*numTar] << "," << targetsAll[3+i*numTar];
+				foutSparse << "" << targetsAll[0+i*numTar] << "," << targetsAll[1+i*numTar] << "," << targetsAll[2+i*numTar] << "," << targetsAll[3+i*numTar];
 
 				/*** SPARSE: get relevant features ***/
 				for (int j=0; j<NUM_SYLLABLE_FEATURES; ++j)
@@ -189,12 +190,13 @@ void TrainingFileGenerator::separate_training_test_files()
 {
 	// create a file-reading object for feature-file
 	std::ifstream fin;
-	fin.open(m_path + "corpus.data"); // open input file
+	fin.open(m_outpath + "samples-all.csv"); // open input file
 	if (!fin.good())
-		std::cerr << "ERROR: corpus.data file not found! " << std::endl;
+		std::cerr << "ERROR: samples-all.csv file not found! " << std::endl;
 
 	// read lines to vector
 	std::string line;
+	std::getline(fin, line); // ignore header
 	std::vector<std::string> trainSamples;
 	while (std::getline(fin, line))
 	{
@@ -275,8 +277,10 @@ void TrainingFileGenerator::separate_training_test_files()
 
 	// write to files
 	std::ofstream foutTrain, foutTest;
-	foutTrain.open (m_path + "corpus.training");
-	foutTest.open (m_path + "corpus.test");
+	foutTrain.open (m_outpath + "samples-training.csv");
+	foutTrain << "name,slope,offset,strength,duration,features(sparse)" << std::endl;
+	foutTest.open (m_outpath + "samples-test.csv");
+	foutTest << "name,slope,offset,strength,duration,features(sparse)" << std::endl;
 
 	for (std::string s : trainSamples)
 	{

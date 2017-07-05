@@ -13,15 +13,14 @@
 int main(int argc, char* argv[])
 {
 	// Check the number of parameters
-	if (argc != 5)
+	if (argc != 4)
 	{
-		std::cerr << "Usage: " << std::string(argv[0]) << " <PATH> <FEATURE-FILE> <TARGET-FILE> <OUTPUT-FILE>" << std::endl;
-		std::cerr << "(Type in FILEs without path, just the name.)" << std::endl;
+		std::cerr << "Usage: " << std::string(argv[0]) << " <FEATURE-FILE> <TARGET-FILE> <OUTPUT-PATH>" << std::endl;
 		return 1;
 	}
 
-	std::string path (argv[1]), featureFile (argv[2]), targetFile (argv[3]), trainingFile (argv[4]);
-	TrainingFileGenerator readWrite (path, featureFile, targetFile, trainingFile);
+	std::string featureFile (argv[1]), targetFile (argv[2]), outpath (argv[3]);
+	TrainingFileGenerator readWrite (featureFile, targetFile, outpath);
 	readWrite.print_statistics();
 
 	return 0;

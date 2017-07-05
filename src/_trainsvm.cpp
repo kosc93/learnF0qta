@@ -15,12 +15,12 @@ int main(int argc, char* argv[])
 	// Check the number of parameters
 	if (argc != 4)
 	{
-		std::cerr << "Usage: " << std::string(argv[0]) << "<PATH> <TRAINING-FILE> <TEST-FILE>" << std::endl;
+		std::cerr << "Usage: " << std::string(argv[0]) << " <TRAINING-FILE> <TEST-FILE> <OUTPUT-PATH>" << std::endl;
 		return 1;
 	}
 
-	std::string path (argv[1]), trainingFile (argv[2]), testFile (argv[3]);
-	SVMTrainer svmRegressor (path, trainingFile);
+	std::string trainingFile (argv[1]), testFile (argv[2]), outpath (argv[3]);
+	SVMTrainer svmRegressor (trainingFile, outpath);
 	svmRegressor.predict(testFile);
 	return 0;
 }

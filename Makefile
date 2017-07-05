@@ -2,7 +2,7 @@ CC := g++
 SRCDIR := src
 BINDIR := bin
 BUILDDIR := build
-EXECUTABLES := $(BINDIR)/sampa2vec $(BINDIR)/findqta $(BINDIR)/linkqta $(BINDIR)/plotqta $(BINDIR)/trainsvm $(BINDIR)/predictqta
+EXECUTABLES := $(BINDIR)/sampa2vec $(BINDIR)/findqta $(BINDIR)/linkqta $(BINDIR)/plotqta $(BINDIR)/trainsvm $(BINDIR)/predictqta $(BINDIR)/initf0stat
  
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -37,6 +37,10 @@ $(BINDIR)/predictqta: $(BUILDDIR)/_predictqta.o $(BUILDDIR)/SystemTA.o $(BUILDDI
 	@echo " Linking" $@ "... "
 	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB) -lm
 
+$(BINDIR)/initf0stat: $(BUILDDIR)/_initf0stat.o $(BUILDDIR)/utilities.o
+	@echo " Linking" $@ "... "
+	@echo " $(CC) $^ -o $@ $(LIB)"; $(CC) $^ -o $@ $(LIB)
+
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
 	@mkdir -p $(BINDIR)
@@ -45,7 +49,6 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 clean:
 	@echo " Cleaning..."; 
 	@echo " $(RM) -r $(BUILDDIR) $(BINDIR)"; $(RM) -r $(BUILDDIR) $(BINDIR)
-	@echo " $(RM) -r test/plots test/resynthesis test/svm ... "; $(RM) -r test/plots test/resynthesis test/svm test/data/FEATURES.csv test/data/TARGETS.csv test/data/TRAINING.csv test/output.txt test/data/corpus.data test/data/corpus.test test/data/corpus.training
 
 test: all
 	@echo " Testing...";

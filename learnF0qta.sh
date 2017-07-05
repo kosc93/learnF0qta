@@ -27,16 +27,6 @@ then
 	##### input/output file #####
 	path=$(dirname $1)
 	filename=$(basename $1 .xml)
-	output=$path/output.txt
-
-	printf '\n>>> [xml] reading configuration file ... \n' | tee $output
-	printf '\tslope\t [%s%s] st/sec\n' "$mmin,$mmax" | tee -a $output
-	printf '\toffset\t [%s%s] st\n' "$bmin,$bmax" | tee -a $output
-	printf '\tstrength [%s%s] 1/sec\n' "$lmin,$lmax" | tee -a $output
-	printf '\torder\t %s\n' "$N" | tee -a $output
-	printf '\tshift\t %s ms\n' "$sshift" | tee -a $output
-	printf '\talgorithm\t %s \n' "$algo" | tee -a $output
-	printf '\trandom-iter\t %s \n\n' "$iter" | tee -a $output
 
 	if [ $doSearch = 1 ]
 	then
@@ -44,30 +34,64 @@ then
 		cp tools/_qtaSearch.praat $path/corpus
 		cp bin/findqta $path/corpus
 
-		printf ">>> [praat] process annotated audio files ... \n" | tee -a $output
+		printf ">>> [praat] process annotated audio files ... \n"
 		tools/praat --run $path/corpus/_qtaSearch.praat \"Compute qTA parameters\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $sshift $N $algo $iter
 
-		printf "\n>>> [praat] calculate ensemble file ... \n" | tee -a $output
+		printf "\n>>> [praat] calculate ensemble file ... \n"
 		tools/praat --run $path/corpus/_qtaSearch.praat \"Assemble ensemble file\" 100 600 $mmin $mmax $bmin $bmax $lmin $lmax $sshift $N $algo $iter
 
-		printf "\n>>> [iconv] convert encoding of target ensemble file ... \n" | tee -a $output
+		printf "\n>>> [iconv] convert encoding of target ensemble file ... \n"
 		if [ "$(uchardet $path/corpus/targets.txt)" = "UTF-16" ]
 		then
-			iconv -f UTF-16 -t UTF-8 $path/corpus/targets.txt > tmp.csv
-			cat tmp.csv > $path/data/TARGETS.csv
-			rm tmp.csv
+			iconv -f UTF-16 -t UTF-8 $path/corpus/targets.txt > targets.txt
+			cat targets.txt > $path/data/corpus-targets.csv
+			rm $path/corpus/targets.txt
 		else
-			cp $path/corpus/targets.txt $path/data/TARGETS.csv
+			cp $path/corpus/targets.txt $path/data/corpus-targets.csv
 		fi
 
-		rm $path/corpus/_qtaSearch.praat
-		rm $path/corpus/findqta
+		rm $path/corpus/_qtaSearch.praat $path/corpus/findqta
+	fi
+
+	if [ $doFile = 1 ]
+	then
+		##### create training data #####
+		printf "\n>>> [sampa2vec] calculate feature vectors ... \n"
+		bin/sampa2vec -f $path/data/corpus-sampa.csv $path/data/corpus-features.csv
+
+		printf "\n>>> [linkqta] link features with targets, scale data and get statistics... \n"
+		bin/linkqta $path/data/corpus-features.csv $path/data/corpus-targets.csv $path/data/
+	fi
+
+	if [ $doSVM = 1 ]
+	then
+		##### SVM training + prediction #####
+		printf "\n>>> [trainsvm] train support vector regression and predict test samples ... \n"
+		bin/trainsvm $path/data/samples-training.csv $path/data/samples-test.csv $path/data/
+
+		printf "\n>>> [praat] resythesize audio files with predicted qta parameters ... \n"
+		cp tools/_qtaPredict.praat $path/corpus
+		cp bin/predictqta $path/corpus
+
+		tools/praat --run $path/corpus/_qtaPredict.praat \"Predict F0\" 100 600 "../data/svm-prediction/samples-predict.csv" "svm" $sshift $N
+		tools/praat --run $path/corpus/_qtaPredict.praat \"Assemble ensemble file\" 100 600 "../data/svm-prediction/samples-predict.csv" "svm" $sshift $N
+
+		if [ "$(uchardet $path/corpus/targets.txt)" = "UTF-16" ]
+		then
+			iconv -f UTF-16 -t UTF-8 $path/corpus/targets.txt > targets.txt
+			cat targets.txt > $path/data/svm-prediction/svm-targets.csv
+			rm $path/corpus/targets.txt
+		else
+			cp $path/corpus/targets.txt $path/data/svm-prediction/svm-targets.csv
+		fi
+
+		rm $path/corpus/_qtaPredict.praat $path/corpus/predictqta
 	fi
 
 	if [ $doPlot = 1 ]
 	then
 		##### generate plots #####
-		printf "\n>>> [plotqta] generating plots ... \n" | tee -a $output
+		printf "\n>>> [plotqta] generating plots ... \n"
 		for i in $path/corpus/*.TextGrid; do
 			if [ "$(uchardet $i)" = "UTF-16" ]
 			then
@@ -76,37 +100,18 @@ then
 				rm tmp.TextGrid
 			fi
 		done
-		bin/plotqta $path/data/TARGETS.csv $path/corpus/ $sshift
-
-		##### remove unneccessary files #####
-		#rm $path/corpus/*.semitonef0; rm $path/corpus/*.qtaf0; rm $path/corpus/*.qtaf0sampled; rm $path/corpus/*.plot; rm $path/corpus/*.targets; rm $path/corpus/*.txt;
-	fi
-
-	if [ $doFile = 1 ]
-	then
-		##### create training data #####
-		printf "\n>>> [sampa2vec] calculate feature vectors ... \n" | tee -a $output
-		bin/sampa2vec -f $path/data/SAMPA.csv $path/data/FEATURES.csv | tee -a $output
-
-		printf "\n>>> [linkqta] link features with targets, scale data and get statistics... \n" | tee -a $output
-		bin/linkqta $path/data/ FEATURES.csv TARGETS.csv TRAINING.csv | tee -a $output
-	fi
-
-	if [ $doSVM = 1 ]
-	then
-		##### SVM training + prediction #####
-		printf "\n>>> [trainsvm] train support vector regression and predict test samples ... \n" | tee -a $output
-		bin/trainsvm $path/data/ corpus.training corpus.test
+		bin/plotqta $path/data/plot-files/ $sshift
 	fi
 
 	ELAPSED_TIME=$(($SECONDS - $START_TIME))
 	echo 
-	echo ">>> $(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec <<<" | tee -a $output
+	echo 
+	echo ">>> $(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec <<<"
 
 	exit 0
 else
-	echo 'Wrong config specified:' $1 | tee -a $output
-    echo 'Usage: ./find-training-qta.sh <config-file.xml>' | tee -a $output
+	echo 'Wrong config specified:' $1
+    echo 'Usage: ./find-training-qta.sh <config-file.xml>'
     exit 1
 fi
 

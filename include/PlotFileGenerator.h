@@ -8,17 +8,20 @@
 
 class PlotFileGenerator {
 public:
-	PlotFileGenerator (std::string targetLine, std::string path, double shift);
+	PlotFileGenerator (std::string targetLine, std::string path, std::string subdir, double shift);
+	void generate_plot_file_qta ();
+	void generate_plot_file_svm ();
+	void plot_svm ();
 
 private:
 	// member functions
 	void analyze_syllable_bounds ();
 	void analyze_target_line ();
-	void generate_plot_file ();
 	void call_gnuplot ();
 
 	// members
 	std::string m_path;
+	std::string m_subdir;
 	std::vector<double> m_targetLineValues;
 	std::string m_name;
 	double m_shift;

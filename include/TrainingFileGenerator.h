@@ -9,7 +9,7 @@
 
 class TrainingFileGenerator {
 public:
-	TrainingFileGenerator(std::string path, std::string featureFile, std::string targetFile, std::string trainingFile);
+	TrainingFileGenerator(std::string featureFile, std::string targetFile, std::string outpath);
 	void print_statistics();
 
 private:
@@ -25,7 +25,7 @@ private:
 	std::string m_featureFile;
 	std::string m_targetFile;
 	std::string m_trainingFile;
-	std::string m_path;
+	std::string m_outpath;
 	std::map<std::string, std::string> m_featureMap;
 	std::map<std::string, std::string> m_targetMap;
 	unsigned int m_syllables;

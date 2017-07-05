@@ -15,7 +15,7 @@
 class SVMTrainer{
 
 public:
-	SVMTrainer(std::string path, std::string trainingFile);
+	SVMTrainer(std::string trainingFile, std::string outpath);
 	~SVMTrainer();
 
 	void predict(std::string testFile);
@@ -46,7 +46,7 @@ private:
 	struct svm_model m_modelDuration;
 
 	// data IO
-	std::string m_path;
+	std::string m_outpath;
 	std::string m_testFile;
 	std::string m_trainingFile;
 	std::vector<double> m_targetSlope;

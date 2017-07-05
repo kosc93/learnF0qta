@@ -48,15 +48,5 @@ inlucde/svm.h
 .tmp/*
 
 # test
-*.txt
-test/data/FEATURES.csv
-test/data/TARGETS.csv
-test/data/TRAINING.csv
-test/data/corpus.data
-test/data/corpus.training
-test/data/corpus.test
-test/plots/*
-test/svm/*
-test/resynthesis/*
-*.txt
+
 

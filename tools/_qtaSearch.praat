@@ -49,7 +49,6 @@ numberOfFiles = Get number of strings
 if !numberOfFiles
 	exit There are no sound files in the folder!
 else
-	Write to raw text file... 'directory$'FileList.txt
 	more_file = 1
 endif
 
@@ -91,13 +90,14 @@ if task = 1
 			Write to headerless spreadsheet file... 'directory$''name$'.semitonef0
 			Remove
 		else
+			createDirectory: "'directory$'../data/plot-files"
 			select Sound 'name$'
 			To Manipulation... 0.01 f0_min f0_max
 			Extract pitch tier
 			Rename... semitonef0
 			Formula... 12 * ln (self) / ln(2); semitone
 			Down to TableOfReal... Hertz
-			Write to headerless spreadsheet file... 'directory$''name$'.semitonef0
+			Write to headerless spreadsheet file... 'directory$'../data/plot-files/'name$'.semitonef0
 			Remove
 			select Manipulation 'name$'
 			Remove
@@ -111,11 +111,11 @@ if task = 1
 		##### save result
 		select PitchTier fittedf0
 		Down to TableOfReal... Hertz
-		Write to headerless spreadsheet file... 'directory$''name$'.qtaf0
+		Write to headerless spreadsheet file... 'directory$'../data/plot-files/'name$'.qtaf0
 		Remove
 		select PitchTier fittedf0sampled
 		Down to TableOfReal... Hertz
-		Write to headerless spreadsheet file... 'directory$''name$'.qtaf0sampled
+		Write to headerless spreadsheet file... 'directory$'../data/plot-files/'name$'.qtaf0sampled
 		Remove
 		select TableOfReal targets
 		Write to headerless spreadsheet file... 'directory$''name$'.targets
@@ -415,6 +415,7 @@ procedure assembleTargetFile
 		name$ = fileName$ - ".wav" - ".WAV"
 		
 		Read TableOfReal from headerless spreadsheet file... 'name$'.targets
+		filedelete 'name$'.targets
 		select TableOfReal 'name$'
 		nrows = Get number of rows
 
@@ -448,8 +449,9 @@ procedure qtaResynthesis
 	Replace pitch tier
 	select Manipulation 'name$'
 	Get resynthesis (overlap-add)
-	createDirectory: "'directory$'../resynthesis"
-	nowarn Save as WAV file: "'directory$'../resynthesis/'name$'_qTA.wav"
+	createDirectory: "'directory$'../audios"
+	createDirectory: "'directory$'../audios/qta"
+	nowarn Save as WAV file: "'directory$'../audios/qta/'name$'_qTA.wav"
 	Remove
 	select Manipulation 'name$'
 	Remove

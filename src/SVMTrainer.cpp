@@ -6,9 +6,9 @@
 #include <fstream>
 #include <sys/stat.h>
 
-SVMTrainer::SVMTrainer(std::string path, std::string trainingFile)
+SVMTrainer::SVMTrainer(std::string trainingFile, std::string outpath)
 {
-	m_path = path;
+	m_outpath = outpath;
 	m_trainingFile = trainingFile;
 
 	determine_parameters ();
@@ -64,12 +64,13 @@ void SVMTrainer::read_training_file()
 {
 	// create a file-reading object for sparse training-file
 	std::ifstream fin;
-	fin.open(m_path + m_trainingFile); // open input file
+	fin.open(m_trainingFile); // open input file
 	if (!fin.good())
 		std::cerr << "ERROR: feature-input file not found! " << std::endl;
 
 	// read features to vector
 	std::string line;
+	std::getline(fin, line); // ignore first line - header
 	while (std::getline(fin, line))
 	{
 		std::vector<std::string> tokens;
@@ -140,13 +141,15 @@ void SVMTrainer::svm_training()
 	pm4 = svm_train(&m_dataDuration, &m_parametersDuration);
 	m_modelDuration = *pm4;
 
-	// create directory for plots and output file (plot file)
-	std::string path = m_path + "../svm/";
+	// create directory for results
+	std::string path = m_outpath + "svm-prediction/";
 	const int dir_err = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	if (-1 == dir_err)
 	{
 		//std::cout << "ERROR creating directory: " << m_path + "plots/" << std::endl;
 	}
+	path += "model/";
+	mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
 	// save model
 	std::string modelFile;
@@ -166,19 +169,21 @@ void SVMTrainer::predict(std::string testFile)
 
 	// create a file-reading object for sparse test-file
 	std::ifstream fin;
-	fin.open(m_path + m_testFile); // open input file
+	fin.open(m_testFile); // open input file
 	if (!fin.good())
 		std::cerr << "ERROR: test-feature-input file not found! " << std::endl;
 
 	// store results in file
 	std::ofstream fout;
-	fout.open(m_path + "../svm/svm.predict");
+	fout.open(m_outpath + "svm-prediction/samples-predict.csv");
+	fout << "name,slope,offset,strength,duration" << std::endl;
 
 	// read features to vector
 	std::string line;
 	std::vector<double> slope, offset, strength, duration;
 	std::vector< std::vector<svm_node> > features;
 	std::vector<std::string> label;
+	std::getline(fin, line); // ignore first line - header
 	while (std::getline(fin, line))
 	{
 		std::vector<std::string> tokens;
