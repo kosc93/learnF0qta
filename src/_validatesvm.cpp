@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 	int cnt (0);
 	std::string sampleFile (argv[1]);
 
-	#pragma omp parallel for schedule (dynamic) collapse(3)
+	//#pragma omp parallel for schedule (dynamic) collapse(3)
 	for (int expC = -5; expC <= 15; ++expC)
 	{
 		for (int expG = -15; expG <= 3; ++expG)
